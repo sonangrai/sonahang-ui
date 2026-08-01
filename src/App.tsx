@@ -29,6 +29,9 @@ function App() {
         >
           Count is {count}
         </button>
+        <a href="/storybook/" className="counter">
+          View Storybook
+        </a>
       </section>
 
       <div className="ticks"></div>

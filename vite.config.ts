@@ -12,6 +12,12 @@ const dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(file
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
   plugins: [react()],
+  build: {
+    // Separate from build:lib's `dist` (the published npm package) and
+    // from Storybook's own output — this is the landing-page app build,
+    // deployed to Vercel with the Storybook build nested under it.
+    outDir: 'site-dist',
+  },
   test: {
     projects: [{
       extends: true,

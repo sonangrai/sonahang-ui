@@ -26,6 +26,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "build:lib": "vite build --config vite.lib.config.ts && tsc -p tsconfig.build.json",
+    "build:site": "tsc -b && vite build && storybook build -o site-dist/storybook",
     "prepublishOnly": "pnpm build:lib",
     "lint": "eslint .",
     "preview": "vite preview",
