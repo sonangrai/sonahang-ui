@@ -1,0 +1,34 @@
+/**
+ * Color primitives — raw scales, no meaning attached.
+ * Never reference these directly in components; use the semantic
+ * tokens in colors.semantic.css instead. Placeholder values, swap
+ * for real brand colors when available.
+ */
+:root {
+  /* Accent — single hue (mono scheme) */
+  --color-accent-50: #f6f0ff;
+  --color-accent-100: #ece0ff;
+  --color-accent-200: #d9c2ff;
+  --color-accent-300: #c19dff;
+  --color-accent-400: #a672ff;
+  --color-accent-500: #8b47fa;
+  --color-accent-600: #7429e0;
+  --color-accent-700: #5d1fb8;
+  --color-accent-800: #461890;
+  --color-accent-900: #331269;
+  --color-accent-950: #1f0b40;
+
+  /* Neutral — grayscale for text, surfaces, and borders */
+  --color-neutral-0: #ffffff;
+  --color-neutral-50: #f8f7fa;
+  --color-neutral-100: #efedf3;
+  --color-neutral-200: #e2dfe8;
+  --color-neutral-300: #cac6d3;
+  --color-neutral-400: #a29cae;
+  --color-neutral-500: #79728a;
+  --color-neutral-600: #5a5468;
+  --color-neutral-700: #423d4d;
+  --color-neutral-800: #2c2836;
+  --color-neutral-900: #1a1720;
+  --color-neutral-950: #0d0b12;
+}

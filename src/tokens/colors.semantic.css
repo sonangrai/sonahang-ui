@@ -1,0 +1,49 @@
+/**
+ * Semantic color tokens — what components should consume.
+ * Values are aliases onto colors.css primitives; light mode is the
+ * default, dark mode overrides via prefers-color-scheme.
+ *
+ * --color-accent-fill-bg/-text is a fixed pairing (700-900 fill,
+ * 100-300 text) that stays constant across themes, for components
+ * like solid buttons or badges that don't flip with the page theme.
+ */
+:root {
+  --color-bg-canvas: var(--color-neutral-0);
+  --color-bg-surface: var(--color-neutral-50);
+  --color-bg-subtle: var(--color-neutral-100);
+
+  --color-text: var(--color-neutral-900);
+  --color-text-subtle: var(--color-neutral-600);
+  --color-text-inverse: var(--color-neutral-0);
+
+  --color-border: var(--color-neutral-200);
+  --color-border-strong: var(--color-neutral-300);
+
+  --color-accent: var(--color-accent-600);
+  --color-accent-hover: var(--color-accent-700);
+  --color-accent-subtle-bg: var(--color-accent-50);
+  --color-accent-subtle-text: var(--color-accent-700);
+
+  --color-accent-fill-bg: var(--color-accent-700);
+  --color-accent-fill-text: var(--color-accent-100);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg-canvas: var(--color-neutral-950);
+    --color-bg-surface: var(--color-neutral-900);
+    --color-bg-subtle: var(--color-neutral-800);
+
+    --color-text: var(--color-neutral-50);
+    --color-text-subtle: var(--color-neutral-400);
+    --color-text-inverse: var(--color-neutral-950);
+
+    --color-border: var(--color-neutral-700);
+    --color-border-strong: var(--color-neutral-600);
+
+    --color-accent: var(--color-accent-400);
+    --color-accent-hover: var(--color-accent-300);
+    --color-accent-subtle-bg: var(--color-accent-900);
+    --color-accent-subtle-text: var(--color-accent-200);
+  }
+}

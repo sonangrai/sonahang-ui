@@ -1,5 +1,8 @@
 import type { Preview } from '@storybook/react-vite'
 
+import '../src/tokens/colors.css'
+import '../src/tokens/colors.semantic.css'
+
 const preview: Preview = {
   parameters: {
     controls: {
