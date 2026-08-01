@@ -12,6 +12,16 @@ const config: StorybookConfig = {
     "@storybook/addon-mcp",
     "@storybook/addon-themes"
   ],
-  "framework": "@storybook/react-vite"
+  "framework": "@storybook/react-vite",
+  // Serve `public/` under /brand rather than at the root: Storybook ships
+  // its own /favicon.svg, which would otherwise shadow ours.
+  "staticDirs": [{ from: "../public", to: "/brand" }],
+  // Storybook has no option for the manager's favicon, so set it here.
+  // (The tab *title* is not configurable — the manager rewrites it to
+  // "<story> ⋅ Storybook" at runtime, so a <title> tag here has no effect.)
+  "managerHead": (head) => `
+    ${head}
+    <link rel="icon" type="image/svg+xml" href="./brand/favicon.svg" />
+  `
 };
 export default config;

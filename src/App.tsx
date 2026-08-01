@@ -1,4 +1,5 @@
 import "./App.css";
+import { Logo } from "./components/Logo";
 import { Text } from "./components/Text";
 
 function App() {
@@ -11,17 +12,15 @@ function App() {
         </Text>
       </span>
 
-      <Text variant="display" className="landing__title">
-        sonahang-ui
-      </Text>
+      <Logo />
 
       <Text variant="body-lg" color="subtle" className="landing__subtitle">
         A React component library and design system — built for consistency,
         documented in Storybook. Still under construction.
       </Text>
 
-      <a href="/storybook/" className="landing__cta">
-        Preview under components components in Storybook
+      <a href="/storybook" className="landing__cta">
+        Preview under-construction components in Storybook
       </a>
 
       <Text variant="caption" color="subtle" className="landing__footer">

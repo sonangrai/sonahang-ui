@@ -24,6 +24,7 @@
   },
   "scripts": {
     "dev": "vite",
+    "dev:all": "concurrently --kill-others-on-fail -n vite,storybook -c cyan,magenta \"pnpm dev\" \"pnpm storybook --no-open\"",
     "build": "tsc -b && vite build",
     "build:lib": "vite build --config vite.lib.config.ts && tsc -p tsconfig.build.json",
     "build:site": "tsc -b && vite build && storybook build -o site-dist/storybook",
@@ -54,6 +55,7 @@
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.4",
+    "concurrently": "^10.0.4",
     "eslint": "^10.8.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.3",

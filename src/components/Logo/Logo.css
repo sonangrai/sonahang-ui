@@ -1,0 +1,32 @@
+.sh-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.sh-logo__wordmark {
+  font-family: var(--font-family-sans);
+  font-weight: var(--font-weight-bold);
+  font-size: 42px;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--color-text);
+}
+
+.sh-logo__accent {
+  color: var(--color-accent);
+}
+
+.sh-logo__rule {
+  width: 100%;
+  height: 2px;
+  border-radius: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--color-accent) 18%,
+    var(--color-accent) 82%,
+    transparent
+  );
+}
