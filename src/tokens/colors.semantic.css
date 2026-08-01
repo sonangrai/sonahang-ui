@@ -1,7 +1,9 @@
 /**
  * Semantic color tokens — what components should consume.
- * Values are aliases onto colors.css primitives; light mode is the
- * default, dark mode overrides via prefers-color-scheme.
+ * Values are aliases onto colors.css primitives. Light mode is the
+ * default. Dark mode applies automatically via prefers-color-scheme,
+ * unless a `data-theme="light"|"dark"` attribute is set on <html>
+ * (e.g. by a theme toggle) — that always wins over OS preference.
  *
  * --color-accent-fill-bg/-text is a fixed pairing (700-900 fill,
  * 100-300 text) that stays constant across themes, for components
@@ -29,7 +31,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme]) {
     --color-bg-canvas: var(--color-neutral-950);
     --color-bg-surface: var(--color-neutral-900);
     --color-bg-subtle: var(--color-neutral-800);
@@ -46,4 +48,22 @@
     --color-accent-subtle-bg: var(--color-accent-900);
     --color-accent-subtle-text: var(--color-accent-200);
   }
+}
+
+:root[data-theme='dark'] {
+  --color-bg-canvas: var(--color-neutral-950);
+  --color-bg-surface: var(--color-neutral-900);
+  --color-bg-subtle: var(--color-neutral-800);
+
+  --color-text: var(--color-neutral-50);
+  --color-text-subtle: var(--color-neutral-400);
+  --color-text-inverse: var(--color-neutral-950);
+
+  --color-border: var(--color-neutral-700);
+  --color-border-strong: var(--color-neutral-600);
+
+  --color-accent: var(--color-accent-400);
+  --color-accent-hover: var(--color-accent-300);
+  --color-accent-subtle-bg: var(--color-accent-900);
+  --color-accent-subtle-text: var(--color-accent-200);
 }

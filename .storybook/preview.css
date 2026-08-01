@@ -1,0 +1,11 @@
+/**
+ * Storybook-canvas-only styling. Paints the semantic background/text
+ * tokens onto the preview surface so light/dark mode flips both
+ * together — this isn't shipped in the published package, since a
+ * component library shouldn't impose body styles on consumer apps.
+ */
+body {
+  background: var(--color-bg-canvas);
+  color: var(--color-text);
+  font-family: var(--font-family-sans);
+}

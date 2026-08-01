@@ -1,5 +1,7 @@
+@import './tokens/fonts.css';
 @import './tokens/colors.css';
 @import './tokens/colors.semantic.css';
+@import './tokens/typography.css';
 
 :root {
   --text: #6b6375;

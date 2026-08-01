@@ -1,0 +1,8 @@
+/**
+ * Loads Inter from Google Fonts CDN. Must be imported before any
+ * other CSS in the bundle — a remote `@import url()` is only valid
+ * as the first rule in a stylesheet; browsers silently drop it
+ * otherwise. Only the weights actually used by typography.css are
+ * requested (regular/medium/semibold/bold).
+ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');

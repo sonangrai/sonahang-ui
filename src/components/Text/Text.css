@@ -1,0 +1,65 @@
+.sh-text {
+  margin: 0;
+  font-family: var(--font-family-sans);
+  color: var(--color-text);
+}
+
+.sh-text--display {
+  font-size: var(--font-size-4xl);
+  line-height: var(--line-height-tight);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.02em;
+}
+.sh-text--heading-1 {
+  font-size: var(--font-size-3xl);
+  line-height: var(--line-height-tight);
+  font-weight: var(--font-weight-bold);
+}
+.sh-text--heading-2 {
+  font-size: var(--font-size-2xl);
+  line-height: var(--line-height-tight);
+  font-weight: var(--font-weight-semibold);
+}
+.sh-text--heading-3 {
+  font-size: var(--font-size-xl);
+  line-height: var(--line-height-normal);
+  font-weight: var(--font-weight-semibold);
+}
+.sh-text--heading-4 {
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-normal);
+  font-weight: var(--font-weight-medium);
+}
+.sh-text--body-lg {
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-normal);
+  font-weight: var(--font-weight-regular);
+}
+.sh-text--body {
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-normal);
+  font-weight: var(--font-weight-regular);
+}
+.sh-text--body-sm {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  font-weight: var(--font-weight-regular);
+}
+.sh-text--caption {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+  font-weight: var(--font-weight-regular);
+}
+
+.sh-text--color-default {
+  color: var(--color-text);
+}
+.sh-text--color-subtle {
+  color: var(--color-text-subtle);
+}
+.sh-text--color-inverse {
+  color: var(--color-text-inverse);
+}
+.sh-text--color-accent {
+  color: var(--color-accent);
+}

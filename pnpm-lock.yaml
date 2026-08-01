@@ -7,13 +7,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      react:
-        specifier: ^19.2.8
-        version: 19.2.8
-      react-dom:
-        specifier: ^19.2.8
-        version: 19.2.8(react@19.2.8)
     devDependencies:
       '@chromatic-com/storybook':
         specifier: ^5.2.1
@@ -30,6 +23,9 @@ importers:
       '@storybook/addon-mcp':
         specifier: ^0.7.0
         version: 0.7.0(@storybook/addon-vitest@10.5.5(@vitest/browser-playwright@4.1.10)(@vitest/browser@4.1.10)(@vitest/runner@4.1.10)(react@19.2.8)(storybook@10.5.5(@types/react@19.2.18)(react@19.2.8))(vitest@4.1.10))(storybook@10.5.5(@types/react@19.2.18)(react@19.2.8))(typescript@6.0.3)
+      '@storybook/addon-themes':
+        specifier: 10.5.5
+        version: 10.5.5(storybook@10.5.5(@types/react@19.2.18)(react@19.2.8))
       '@storybook/addon-vitest':
         specifier: ^10.5.5
         version: 10.5.5(@vitest/browser-playwright@4.1.10)(@vitest/browser@4.1.10)(@vitest/runner@4.1.10)(react@19.2.8)(storybook@10.5.5(@types/react@19.2.18)(react@19.2.8))(vitest@4.1.10)
@@ -72,6 +68,12 @@ importers:
       playwright:
         specifier: ^1.62.1
         version: 1.62.1
+      react:
+        specifier: ^19.2.8
+        version: 19.2.8
+      react-dom:
+        specifier: ^19.2.8
+        version: 19.2.8(react@19.2.8)
       storybook:
         specifier: ^10.5.5
         version: 10.5.5(@types/react@19.2.18)(react@19.2.8)
@@ -830,6 +832,11 @@ packages:
     peerDependenciesMeta:
       '@storybook/addon-vitest':
         optional: true
+
+  '@storybook/addon-themes@10.5.5':
+    resolution: {integrity: sha512-ENZCJkvTdGYBRuaE3tEE6jRilMRdGgfYUhnFNEUXAg4II2iVYg9mnrq6tuQfwSVjGuEOTAUen/3YV+l7U4oOOA==}
+    peerDependencies:
+      storybook: ^10.5.5
 
   '@storybook/addon-vitest@10.5.5':
     resolution: {integrity: sha512-Ymq9ErkSkYiIDuqpJ2+hE5GCQ5J6TCLOWhutqArvwaeAO+HAibM82XNExpJ1/kvPqk9y961GDPkv2W15I88JIw==}
@@ -2766,6 +2773,11 @@ snapshots:
     transitivePeerDependencies:
       - '@tmcp/auth'
       - typescript
+
+  '@storybook/addon-themes@10.5.5(storybook@10.5.5(@types/react@19.2.18)(react@19.2.8))':
+    dependencies:
+      storybook: 10.5.5(@types/react@19.2.18)(react@19.2.8)
+      ts-dedent: 2.3.0
 
   '@storybook/addon-vitest@10.5.5(@vitest/browser-playwright@4.1.10)(@vitest/browser@4.1.10)(@vitest/runner@4.1.10)(react@19.2.8)(storybook@10.5.5(@types/react@19.2.18)(react@19.2.8))(vitest@4.1.10)':
     dependencies:

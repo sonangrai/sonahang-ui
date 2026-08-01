@@ -19,4 +19,11 @@ export default defineConfig([globalIgnores(['dist']), {
   languageOptions: {
     globals: globals.browser,
   },
+}, {
+  // Barrel files re-export components alongside constants/types by design;
+  // Fast Refresh doesn't apply to them the way it does to app modules.
+  files: ['src/index.ts', 'src/components/**/index.ts'],
+  rules: {
+    'react-refresh/only-export-components': 'off',
+  },
 }, ...storybook.configs["flat/recommended"]])
