@@ -14,4 +14,7 @@ import './tokens/typography.css';
 export { Text, textVariants, textColors, textWeights } from './components/Text';
 export type { TextProps, TextVariant, TextColor, TextWeight } from './components/Text';
 
+export { Button, buttonVariants, buttonSizes } from './components/Button';
+export type { ButtonProps, ButtonVariant, ButtonSize } from './components/Button';
+
 export * as colorTokens from './tokens/colors';
