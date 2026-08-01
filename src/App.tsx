@@ -20,8 +20,8 @@ function App() {
         documented in Storybook. Still under construction.
       </Text>
 
-      <a href="/storybook/" className="landing__cta">
-        Preview under components components in Storybook
+      <a href="/storybook" className="landing__cta">
+        Preview under components in Storybook
       </a>
 
       <Text variant="caption" color="subtle" className="landing__footer">
