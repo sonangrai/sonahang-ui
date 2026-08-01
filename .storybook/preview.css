@@ -9,3 +9,66 @@ body {
   color: var(--color-text);
   font-family: var(--font-family-sans);
 }
+
+/**
+ * Docs pages don't follow the theme switcher on their own: their chrome
+ * is painted by Storybook's *manager* theme (see manager.tsx), which is
+ * a separate system from our `data-theme` tokens. Without this, toggling
+ * to dark leaves autodocs on a white background.
+ *
+ * Mapping the docs surfaces onto the semantic tokens makes them flip
+ * with the switcher and match the design system. Targets Storybook's
+ * public `sbdocs-*` classes.
+ */
+.sbdocs-wrapper {
+  background: var(--color-bg-canvas);
+}
+
+.sbdocs.sbdocs-h1,
+.sbdocs.sbdocs-h2,
+.sbdocs.sbdocs-h3,
+.sbdocs.sbdocs-h4,
+.sbdocs.sbdocs-h5,
+.sbdocs.sbdocs-h6,
+.sbdocs.sbdocs-p,
+.sbdocs.sbdocs-li,
+.sbdocs.sbdocs-strong {
+  color: var(--color-text);
+}
+
+.sbdocs.sbdocs-h1,
+.sbdocs.sbdocs-h2 {
+  border-bottom-color: var(--color-border);
+}
+
+.sbdocs.sbdocs-a {
+  color: var(--color-accent);
+}
+
+/* Story preview blocks and their toolbars. */
+.sbdocs .docs-story,
+.sbdocs .sb-story {
+  background: var(--color-bg-canvas);
+}
+
+.sbdocs .sb-previewBlock,
+.sbdocs .sb-bar {
+  background: var(--color-bg-surface);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+/* Args tables. */
+.sbdocs .docblock-argstable-head th,
+.sbdocs .docblock-argstable-body td,
+.sbdocs .docblock-argstable-body th {
+  background: var(--color-bg-canvas);
+  color: var(--color-text);
+  border-bottom-color: var(--color-border);
+}
+
+.sbdocs .docblock-argstable-body {
+  background: var(--color-bg-canvas);
+  box-shadow: none;
+  border: 1px solid var(--color-border);
+}
