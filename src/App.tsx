@@ -7,7 +7,7 @@ function App() {
       <span className="landing__badge">
         <span className="landing__badge-dot" aria-hidden="true" />
         <Text variant="caption" color="subtle">
-          Coming soon
+          On construction
         </Text>
       </span>
 
@@ -19,6 +19,10 @@ function App() {
         A React component library and design system — built for consistency,
         documented in Storybook. Still under construction.
       </Text>
+
+      <a href="/storybook/" className="landing__cta">
+        Preview under components components in Storybook
+      </a>
 
       <Text variant="caption" color="subtle" className="landing__footer">
         © {new Date().getFullYear()} sonahang-ui
