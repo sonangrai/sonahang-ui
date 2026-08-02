@@ -20,4 +20,7 @@ export type { ButtonProps, ButtonVariant, ButtonSize } from './components/Button
 export { Tag, tagVariants } from './components/Tag';
 export type { TagProps, TagVariant } from './components/Tag';
 
+export { Chip, chipVariants, chipActions } from './components/Chip';
+export type { ChipProps, ChipVariant, ChipAction } from './components/Chip';
+
 export * as colorTokens from './tokens/colors';

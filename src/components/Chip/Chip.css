@@ -1,0 +1,74 @@
+.sh-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  white-space: nowrap;
+}
+
+/* Tighter on the right so the round action button sits inside the pill. */
+.sh-chip--with-action {
+  padding-right: 4px;
+}
+
+.sh-chip--disabled {
+  opacity: 0.5;
+}
+
+.sh-chip__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background-color: transparent;
+  /* Inherit the chip's text colour so one rule works on every variant. */
+  color: inherit;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.sh-chip__action > svg {
+  width: 12px;
+  height: 12px;
+}
+
+.sh-chip__action:not(:disabled):hover {
+  background-color: color-mix(in srgb, currentColor 22%, transparent);
+}
+
+.sh-chip__action:disabled {
+  cursor: not-allowed;
+}
+
+.sh-chip__action:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+}
+
+/* Variants mirror the Tag/Button palette so the three read as one system. */
+.sh-chip--primary {
+  background-color: var(--color-accent-fill-bg);
+  color: var(--color-accent-fill-text);
+}
+
+.sh-chip--secondary {
+  background-color: var(--color-accent-subtle-bg);
+  color: var(--color-accent-subtle-text);
+}
+
+.sh-chip--outline {
+  background-color: transparent;
+  border-color: var(--color-border-strong);
+  color: var(--color-text);
+}
