@@ -17,4 +17,7 @@ export type { TextProps, TextVariant, TextColor, TextWeight } from './components
 export { Button, buttonVariants, buttonSizes } from './components/Button';
 export type { ButtonProps, ButtonVariant, ButtonSize } from './components/Button';
 
+export { Tag, tagVariants } from './components/Tag';
+export type { TagProps, TagVariant } from './components/Tag';
+
 export * as colorTokens from './tokens/colors';
