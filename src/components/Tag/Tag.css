@@ -1,0 +1,30 @@
+.sh-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 10px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  white-space: nowrap;
+}
+
+/* Variants mirror the Button palette so the two read as one system. */
+.sh-tag--primary {
+  background-color: var(--color-accent-fill-bg);
+  color: var(--color-accent-fill-text);
+}
+
+.sh-tag--secondary {
+  background-color: var(--color-accent-subtle-bg);
+  color: var(--color-accent-subtle-text);
+}
+
+.sh-tag--outline {
+  background-color: transparent;
+  border-color: var(--color-border-strong);
+  color: var(--color-text);
+}
