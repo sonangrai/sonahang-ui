@@ -23,4 +23,7 @@ export type { TagProps, TagVariant } from './components/Tag';
 export { Chip, chipVariants, chipActions } from './components/Chip';
 export type { ChipProps, ChipVariant, ChipAction } from './components/Chip';
 
+export { Avatar, AvatarGroup, avatarSizes } from './components/Avatar';
+export type { AvatarProps, AvatarGroupProps, AvatarSize } from './components/Avatar';
+
 export * as colorTokens from './tokens/colors';
