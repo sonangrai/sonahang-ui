@@ -29,4 +29,7 @@ export type { AvatarProps, AvatarGroupProps, AvatarSize } from './components/Ava
 export { Input } from './components/Input';
 export type { InputProps } from './components/Input';
 
+export { Textarea } from './components/Textarea';
+export type { TextareaProps, TextareaResize } from './components/Textarea';
+
 export * as colorTokens from './tokens/colors';
