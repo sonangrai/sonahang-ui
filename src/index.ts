@@ -32,4 +32,10 @@ export type { InputProps } from './components/Input';
 export { Textarea } from './components/Textarea';
 export type { TextareaProps, TextareaResize } from './components/Textarea';
 
+export { SegmentedControl } from './components/SegmentedControl';
+export type {
+  SegmentedControlProps,
+  SegmentedControlOption,
+} from './components/SegmentedControl';
+
 export * as colorTokens from './tokens/colors';
