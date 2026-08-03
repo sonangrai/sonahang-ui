@@ -1,0 +1,152 @@
+.sh-segmented-field {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: var(--font-family-sans);
+}
+
+.sh-segmented__group-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+}
+
+/*
+ * Don't inherit the consumer's box model. The published stylesheet ships no
+ * reset, and the indicator maths below depends on border-box: its 1px border
+ * has to sit *inside* `width`, or it renders wider than its column and
+ * `translateX(100%)` over-travels by 2px per step — drift that accumulates
+ * and is worst on the last segment.
+ */
+.sh-segmented,
+.sh-segmented::after,
+.sh-segmented__item,
+.sh-segmented__label {
+  box-sizing: border-box;
+}
+
+/*
+ * The track the segments sit in. Grid with equal columns rather than flex:
+ * the sliding indicator below is positioned as `index * 100%` of one
+ * segment, which is only correct if every segment is the same width.
+ */
+.sh-segmented {
+  position: relative;
+  display: inline-grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  align-items: stretch;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+
+/*
+ * The active indicator. One element on the track that slides between slots,
+ * rather than a border on each label — a per-segment pseudo-element can't
+ * animate across to a different segment.
+ */
+.sh-segmented::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: 0 auto 0 0;
+  width: calc(100% / var(--sh-segmented-count, 1));
+  transform: translateX(calc(var(--sh-segmented-index, 0) * 100%));
+  border: 1px solid var(--color-accent);
+  /* Track radius minus its 1px border, so the curves sit concentric. */
+  border-radius: 9px;
+  pointer-events: none;
+  transition:
+    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.15s ease;
+}
+
+/* Nothing chosen yet — keep the indicator parked but invisible. */
+.sh-segmented--unselected::after {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sh-segmented::after {
+    transition: none;
+  }
+}
+
+.sh-segmented--full-width {
+  display: grid;
+  width: 100%;
+}
+
+.sh-segmented__item {
+  position: relative;
+  /* Above the indicator, so labels stay readable as it passes under them. */
+  z-index: 1;
+  display: inline-flex;
+  cursor: pointer;
+}
+
+.sh-segmented__item--disabled {
+  cursor: not-allowed;
+}
+
+/*
+ * Visually hidden but still focusable and still in the accessibility tree —
+ * the native radio does the real work, the sibling span is what's painted.
+ */
+.sh-segmented__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+.sh-segmented__label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 6px 14px;
+  border-radius: 8px;
+  color: var(--color-text-subtle);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  white-space: nowrap;
+  user-select: none;
+  transition: color 0.15s ease;
+}
+
+.sh-segmented__item:not(.sh-segmented__item--disabled):hover
+  .sh-segmented__label {
+  color: var(--color-text);
+}
+
+/*
+ * Active segment: text colour only. The accent outline comes from the
+ * sliding ::after above, so nothing here changes the label's box and the
+ * row can't shift as the selection moves.
+ */
+.sh-segmented__input:checked + .sh-segmented__label {
+  color: var(--color-accent);
+}
+
+/* The radio itself is invisible, so the ring has to go on the painted span. */
+.sh-segmented__input:focus-visible + .sh-segmented__label {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+.sh-segmented__input:disabled + .sh-segmented__label {
+  color: var(--color-text-subtle);
+  opacity: 0.5;
+}
+
+.sh-segmented__input:disabled:checked + .sh-segmented__label {
+  background-color: var(--color-bg-canvas);
+}
