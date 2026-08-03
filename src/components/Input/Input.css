@@ -1,0 +1,113 @@
+.sh-input {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: var(--font-family-sans);
+}
+
+.sh-input__label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+}
+
+.sh-input__required {
+  margin-left: 2px;
+  color: var(--color-danger);
+}
+
+/* Positioning context for the icon, which overlays the input. */
+.sh-input__field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.sh-input__icon {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: var(--color-text-subtle);
+  /* Decorative only — let clicks fall through to the input beneath. */
+  pointer-events: none;
+}
+
+.sh-input__icon > svg {
+  width: 100%;
+  height: 100%;
+}
+
+.sh-input--with-icon-left .sh-input__icon {
+  left: 12px;
+}
+
+.sh-input--with-icon-right .sh-input__icon {
+  right: 12px;
+}
+
+.sh-input__control {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 8px;
+  background-color: var(--color-bg-canvas);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  transition:
+    border-color 0.15s ease,
+    outline-color 0.15s ease;
+}
+
+/* Make room so text never runs under the icon. */
+.sh-input--with-icon-left .sh-input__control {
+  padding-left: 36px;
+}
+
+.sh-input--with-icon-right .sh-input__control {
+  padding-right: 36px;
+}
+
+.sh-input__control::placeholder {
+  color: var(--color-text-subtle);
+}
+
+.sh-input__control:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+  border-color: var(--color-accent);
+}
+
+.sh-input__control:disabled {
+  background-color: var(--color-bg-subtle);
+  color: var(--color-text-subtle);
+  cursor: not-allowed;
+}
+
+.sh-input__message {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-subtle);
+}
+
+/* Invalid state */
+.sh-input--invalid .sh-input__control {
+  border-color: var(--color-danger-border);
+}
+
+.sh-input--invalid .sh-input__control:focus-visible {
+  outline-color: var(--color-danger-border);
+}
+
+.sh-input--invalid .sh-input__message {
+  color: var(--color-danger);
+}
+
+.sh-input--disabled .sh-input__label {
+  color: var(--color-text-subtle);
+}

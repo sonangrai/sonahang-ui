@@ -31,4 +31,17 @@
   --color-neutral-800: #2c2836;
   --color-neutral-900: #1a1720;
   --color-neutral-950: #0d0b12;
+
+  /* Danger — validation errors and destructive actions */
+  --color-danger-50: #fef3f2;
+  --color-danger-100: #fee4e2;
+  --color-danger-200: #fecdca;
+  --color-danger-300: #fda29b;
+  --color-danger-400: #f97066;
+  --color-danger-500: #f04438;
+  --color-danger-600: #d92d20;
+  --color-danger-700: #b42318;
+  --color-danger-800: #912018;
+  --color-danger-900: #7a271a;
+  --color-danger-950: #55160c;
 }

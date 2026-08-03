@@ -28,6 +28,9 @@
 
   --color-accent-fill-bg: var(--color-accent-700);
   --color-accent-fill-text: var(--color-accent-100);
+
+  --color-danger: var(--color-danger-700);
+  --color-danger-border: var(--color-danger-500);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -47,6 +50,9 @@
     --color-accent-hover: var(--color-accent-300);
     --color-accent-subtle-bg: var(--color-accent-900);
     --color-accent-subtle-text: var(--color-accent-200);
+
+    --color-danger: var(--color-danger-300);
+    --color-danger-border: var(--color-danger-400);
   }
 }
 
@@ -66,4 +72,7 @@
   --color-accent-hover: var(--color-accent-300);
   --color-accent-subtle-bg: var(--color-accent-900);
   --color-accent-subtle-text: var(--color-accent-200);
+
+  --color-danger: var(--color-danger-300);
+  --color-danger-border: var(--color-danger-400);
 }

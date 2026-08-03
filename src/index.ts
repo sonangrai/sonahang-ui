@@ -26,4 +26,7 @@ export type { ChipProps, ChipVariant, ChipAction } from './components/Chip';
 export { Avatar, AvatarGroup, avatarSizes } from './components/Avatar';
 export type { AvatarProps, AvatarGroupProps, AvatarSize } from './components/Avatar';
 
+export { Input } from './components/Input';
+export type { InputProps } from './components/Input';
+
 export * as colorTokens from './tokens/colors';
