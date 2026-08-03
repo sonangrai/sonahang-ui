@@ -1,0 +1,91 @@
+/*
+ * Mirrors Input.css deliberately — the two share a visual language but not
+ * a stylesheet, matching the one-component-one-CSS-file convention used
+ * throughout. If a third field type lands, extract a shared `sh-field` block.
+ */
+.sh-textarea {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: var(--font-family-sans);
+}
+
+.sh-textarea__label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+}
+
+.sh-textarea__required {
+  margin-left: 2px;
+  color: var(--color-danger);
+}
+
+.sh-textarea__control {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 8px;
+  background-color: var(--color-bg-canvas);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  transition:
+    border-color 0.15s ease,
+    outline-color 0.15s ease;
+}
+
+.sh-textarea__control--resize-none {
+  resize: none;
+}
+.sh-textarea__control--resize-vertical {
+  resize: vertical;
+}
+.sh-textarea__control--resize-horizontal {
+  resize: horizontal;
+}
+.sh-textarea__control--resize-both {
+  resize: both;
+}
+
+.sh-textarea__control::placeholder {
+  color: var(--color-text-subtle);
+}
+
+.sh-textarea__control:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+  border-color: var(--color-accent);
+}
+
+.sh-textarea__control:disabled {
+  background-color: var(--color-bg-subtle);
+  color: var(--color-text-subtle);
+  cursor: not-allowed;
+  resize: none;
+}
+
+.sh-textarea__message {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-subtle);
+}
+
+/* Invalid state */
+.sh-textarea--invalid .sh-textarea__control {
+  border-color: var(--color-danger-border);
+}
+
+.sh-textarea--invalid .sh-textarea__control:focus-visible {
+  outline-color: var(--color-danger-border);
+}
+
+.sh-textarea--invalid .sh-textarea__message {
+  color: var(--color-danger);
+}
+
+.sh-textarea--disabled .sh-textarea__label {
+  color: var(--color-text-subtle);
+}
