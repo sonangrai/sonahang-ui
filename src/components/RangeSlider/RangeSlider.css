@@ -1,0 +1,155 @@
+/*
+ * Don't inherit the consumer's box model — the published stylesheet ships no
+ * reset, and the thumb's centring offset is derived from fixed track/thumb
+ * sizes.
+ *
+ * Note: every vendor pseudo-element below is written as its own rule. Browsers
+ * discard an entire selector list containing one pseudo-element they don't
+ * recognise, so grouping the -webkit- and -moz- variants would silently drop
+ * the styling in both.
+ */
+.sh-range,
+.sh-range__input,
+.sh-range__label {
+  box-sizing: border-box;
+}
+
+.sh-range {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: var(--font-family-sans);
+}
+
+.sh-range__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sh-range__label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+}
+
+.sh-range__value {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-subtle);
+  font-variant-numeric: tabular-nums;
+}
+
+.sh-range__input {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  /* Taller than the track so the pointer target isn't a 4px sliver. */
+  height: 16px;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* --- Track: WebKit ------------------------------------------------------ */
+.sh-range__input::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 999px;
+  /*
+   * WebKit has no ::-moz-range-progress equivalent, so the filled portion is
+   * a hard gradient stop at --sh-range-fill, set inline from the component.
+   */
+  background: linear-gradient(
+    to right,
+    var(--color-accent) 0 var(--sh-range-fill, 0%),
+    var(--color-bg-subtle) var(--sh-range-fill, 0%) 100%
+  );
+}
+
+/* --- Track: Firefox ----------------------------------------------------- */
+.sh-range__input::-moz-range-track {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--color-bg-subtle);
+}
+
+.sh-range__input::-moz-range-progress {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--color-accent);
+}
+
+/* --- Thumb: WebKit ------------------------------------------------------ */
+.sh-range__input::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  /* Centre the 16px thumb on the 4px track: (4 - 16) / 2. */
+  margin-top: -6px;
+  border: 2px solid var(--color-accent);
+  border-radius: 50%;
+  background-color: var(--color-bg-canvas);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.2);
+  transition: border-color 0.15s ease;
+}
+
+/* --- Thumb: Firefox ----------------------------------------------------- */
+.sh-range__input::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--color-accent);
+  border-radius: 50%;
+  background-color: var(--color-bg-canvas);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.2);
+  transition: border-color 0.15s ease;
+}
+
+/* --- Focus -------------------------------------------------------------- */
+.sh-range__input:focus {
+  outline: none;
+}
+
+.sh-range__input:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.sh-range__input:focus-visible::-moz-range-thumb {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* --- Invalid ------------------------------------------------------------ */
+.sh-range--invalid .sh-range__input::-webkit-slider-thumb {
+  border-color: var(--color-danger-border);
+}
+
+.sh-range--invalid .sh-range__input::-moz-range-thumb {
+  border-color: var(--color-danger-border);
+}
+
+.sh-range--invalid .sh-range__message {
+  color: var(--color-danger);
+}
+
+/* --- Disabled ----------------------------------------------------------- */
+.sh-range__input:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.sh-range--disabled .sh-range__label,
+.sh-range--disabled .sh-range__value {
+  color: var(--color-text-subtle);
+}
+
+.sh-range__message {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-subtle);
+}
