@@ -32,6 +32,9 @@ export type { InputProps } from './components/Input';
 export { Textarea } from './components/Textarea';
 export type { TextareaProps, TextareaResize } from './components/Textarea';
 
+export { Checkbox, CheckboxGroup } from './components/Checkbox';
+export type { CheckboxProps, CheckboxGroupProps } from './components/Checkbox';
+
 export { Radio, RadioGroup } from './components/Radio';
 export type { RadioProps, RadioGroupProps } from './components/Radio';
 
