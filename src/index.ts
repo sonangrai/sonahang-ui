@@ -38,6 +38,9 @@ export type { CheckboxProps, CheckboxGroupProps } from './components/Checkbox';
 export { Radio, RadioGroup } from './components/Radio';
 export type { RadioProps, RadioGroupProps } from './components/Radio';
 
+export { Switch, SwitchGroup } from './components/Switch';
+export type { SwitchProps, SwitchGroupProps } from './components/Switch';
+
 export { SegmentedControl } from './components/SegmentedControl';
 export type {
   SegmentedControlProps,
