@@ -38,6 +38,12 @@ export type { CheckboxProps, CheckboxGroupProps } from './components/Checkbox';
 export { Radio, RadioGroup } from './components/Radio';
 export type { RadioProps, RadioGroupProps } from './components/Radio';
 
+export { RangeSlider } from './components/RangeSlider';
+export type { RangeSliderProps } from './components/RangeSlider';
+
+export { MinMaxSlider } from './components/MinMaxSlider';
+export type { MinMaxSliderProps, MinMaxValue } from './components/MinMaxSlider';
+
 export { Switch, SwitchGroup } from './components/Switch';
 export type { SwitchProps, SwitchGroupProps } from './components/Switch';
 
