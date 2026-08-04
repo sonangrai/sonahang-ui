@@ -32,6 +32,9 @@ export type { InputProps } from './components/Input';
 export { Textarea } from './components/Textarea';
 export type { TextareaProps, TextareaResize } from './components/Textarea';
 
+export { Radio, RadioGroup } from './components/Radio';
+export type { RadioProps, RadioGroupProps } from './components/Radio';
+
 export { SegmentedControl } from './components/SegmentedControl';
 export type {
   SegmentedControlProps,

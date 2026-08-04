@@ -1,0 +1,126 @@
+/*
+ * Don't inherit the consumer's box model — the published stylesheet ships no
+ * reset. The control is a fixed 16px circle whose border has to sit inside
+ * that box, or it renders oversized and misaligned against its label.
+ */
+.sh-radio,
+.sh-radio__input,
+.sh-radio__label {
+  box-sizing: border-box;
+}
+
+.sh-radio {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-family-sans);
+  cursor: pointer;
+}
+
+.sh-radio--disabled {
+  cursor: not-allowed;
+}
+
+/*
+ * The native input *is* the circle — `appearance: none` and style it directly,
+ * rather than hiding it behind a decorative span. Keeps the focus ring, hit
+ * area, and accessibility tree on the real control.
+ */
+.sh-radio__input {
+  appearance: none;
+  -webkit-appearance: none;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 50%;
+  background-color: var(--color-bg-canvas);
+  cursor: inherit;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.sh-radio__input:not(:disabled):hover {
+  border-color: var(--color-accent);
+}
+
+/*
+ * Checked: fill with the accent, then punch a canvas-coloured ring back in
+ * with an inset shadow. That leaves an accent dot centred in an accent ring
+ * without needing a pseudo-element (unreliable on replaced elements).
+ */
+.sh-radio__input:checked {
+  border-color: var(--color-accent);
+  background-color: var(--color-accent);
+  box-shadow: inset 0 0 0 3px var(--color-bg-canvas);
+}
+
+.sh-radio__input:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.sh-radio__input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sh-radio__label {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+  user-select: none;
+}
+
+.sh-radio--disabled .sh-radio__label {
+  color: var(--color-text-subtle);
+  opacity: 0.5;
+}
+
+/* Group */
+.sh-radio-group {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: var(--font-family-sans);
+  box-sizing: border-box;
+}
+
+.sh-radio-group__label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+}
+
+.sh-radio-group__options {
+  display: flex;
+  gap: 8px;
+}
+
+.sh-radio-group__options--vertical {
+  flex-direction: column;
+}
+
+.sh-radio-group__options--horizontal {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.sh-radio-group__message {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-subtle);
+}
+
+.sh-radio-group--invalid .sh-radio-group__message {
+  color: var(--color-danger);
+}
+
+.sh-radio-group--invalid .sh-radio__input:not(:checked) {
+  border-color: var(--color-danger-border);
+}
