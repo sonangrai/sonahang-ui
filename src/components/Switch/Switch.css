@@ -1,0 +1,162 @@
+/*
+ * Don't inherit the consumer's box model — the published stylesheet ships no
+ * reset. The track and thumb are fixed pixel sizes, and the thumb's travel is
+ * derived from them, so a content-box consumer would break the geometry.
+ */
+.sh-switch,
+.sh-switch__track,
+.sh-switch__thumb,
+.sh-switch__label {
+  box-sizing: border-box;
+}
+
+.sh-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-family-sans);
+  cursor: pointer;
+}
+
+/* Label first in the DOM order stays right; flip the row to put it left. */
+.sh-switch--label-left {
+  flex-direction: row-reverse;
+}
+
+.sh-switch--disabled {
+  cursor: not-allowed;
+}
+
+/*
+ * Visually hidden but still focusable and still in the accessibility tree.
+ * The track/thumb below are decorative; this input is the real control.
+ */
+.sh-switch__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+.sh-switch__track {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 20px;
+  padding: 2px;
+  border-radius: 999px;
+  background-color: var(--color-border-strong);
+  transition: background-color 0.2s ease;
+}
+
+.sh-switch__thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: var(--color-bg-canvas);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.2);
+  /* Track 36 − 2px padding either side − 16px thumb = 16px of travel. */
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sh-switch__input:checked + .sh-switch__track {
+  background-color: var(--color-accent);
+}
+
+.sh-switch__input:checked + .sh-switch__track .sh-switch__thumb {
+  transform: translateX(16px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sh-switch__track,
+  .sh-switch__thumb {
+    transition: none;
+  }
+}
+
+/* The input is invisible, so the ring has to go on the painted track. */
+.sh-switch__input:focus-visible + .sh-switch__track {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.sh-switch__input:not(:disabled) + .sh-switch__track:hover {
+  background-color: var(--color-text-subtle);
+}
+
+.sh-switch__input:not(:disabled):checked + .sh-switch__track:hover {
+  background-color: var(--color-accent-hover);
+}
+
+.sh-switch__input:disabled + .sh-switch__track {
+  opacity: 0.5;
+}
+
+.sh-switch__label {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+  user-select: none;
+}
+
+.sh-switch--disabled .sh-switch__label {
+  color: var(--color-text-subtle);
+  opacity: 0.5;
+}
+
+/* Group */
+.sh-switch-group {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: var(--font-family-sans);
+  box-sizing: border-box;
+}
+
+.sh-switch-group__label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+}
+
+.sh-switch-group__options {
+  display: flex;
+  gap: 10px;
+}
+
+.sh-switch-group__options--vertical {
+  flex-direction: column;
+}
+
+/*
+ * Vertical groups usually read as a settings list: stretch each row so a
+ * left-positioned label sits against the label column and the track against
+ * the right edge.
+ */
+.sh-switch-group__options--vertical .sh-switch--label-left {
+  justify-content: space-between;
+}
+
+.sh-switch-group__options--horizontal {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.sh-switch-group__message {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-subtle);
+}
+
+.sh-switch-group--invalid .sh-switch-group__message {
+  color: var(--color-danger);
+}
