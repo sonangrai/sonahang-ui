@@ -38,6 +38,9 @@ export type { CheckboxProps, CheckboxGroupProps } from './components/Checkbox';
 export { Radio, RadioGroup } from './components/Radio';
 export type { RadioProps, RadioGroupProps } from './components/Radio';
 
+export { ProgressBar, progressBarSizes } from './components/ProgressBar';
+export type { ProgressBarProps, ProgressBarSize } from './components/ProgressBar';
+
 export { Alert, alertVariants } from './components/Alert';
 export type { AlertProps, AlertVariant } from './components/Alert';
 

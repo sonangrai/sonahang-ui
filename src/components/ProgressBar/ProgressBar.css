@@ -1,0 +1,98 @@
+/*
+ * Don't inherit the consumer's box model — the published stylesheet ships no
+ * reset, and the track's height is fixed per size.
+ */
+.sh-progress,
+.sh-progress__track,
+.sh-progress__bar {
+  box-sizing: border-box;
+}
+
+.sh-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: var(--font-family-sans);
+}
+
+.sh-progress__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sh-progress__label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+}
+
+.sh-progress__value {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-subtle);
+  font-variant-numeric: tabular-nums;
+}
+
+.sh-progress__track {
+  position: relative;
+  width: 100%;
+  border-radius: 999px;
+  background-color: var(--color-bg-subtle);
+  /* Keeps the bar's square ends inside the rounded track. */
+  overflow: hidden;
+}
+
+.sh-progress__bar {
+  width: var(--sh-progress-fill, 0%);
+  height: 100%;
+  border-radius: inherit;
+  background-color: var(--color-accent);
+  transition: width 0.3s ease;
+}
+
+/* Sizes */
+.sh-progress--sm .sh-progress__track {
+  height: 4px;
+}
+.sh-progress--md .sh-progress__track {
+  height: 8px;
+}
+.sh-progress--lg .sh-progress__track {
+  height: 12px;
+}
+
+/*
+ * Indeterminate: a short bar sweeping the track, since there's no percentage
+ * to represent. Width is fixed and the animation drives position only.
+ */
+.sh-progress--indeterminate .sh-progress__bar {
+  width: 35%;
+  transition: none;
+  animation: sh-progress-sweep 1.4s ease-in-out infinite;
+}
+
+@keyframes sh-progress-sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(calc(100% / 0.35));
+  }
+}
+
+/*
+ * A perpetual animation is exactly what this setting is for. Falling back to a
+ * static part-filled bar would imply real progress, so hold it at full width
+ * and let the label carry the meaning instead.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .sh-progress--indeterminate .sh-progress__bar {
+    width: 100%;
+    animation: none;
+    opacity: 0.5;
+  }
+}
