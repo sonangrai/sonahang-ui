@@ -1,0 +1,87 @@
+/*
+ * Don't inherit the consumer's box model — the published stylesheet ships no
+ * reset, and the ring's border has to sit inside its fixed square.
+ */
+.sh-spinner,
+.sh-spinner__ring,
+.sh-spinner__label {
+  box-sizing: border-box;
+}
+
+.sh-spinner {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-family-sans);
+  /* No colour of its own — inherits whatever it's placed in. */
+  color: inherit;
+}
+
+/*
+ * A ring with one side missing, rotating. The gap is what makes the rotation
+ * readable; a complete ring would look static however fast it spun.
+ */
+.sh-spinner__ring {
+  display: inline-block;
+  flex-shrink: 0;
+  border-style: solid;
+  border-color: currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: sh-spinner-spin 0.6s linear infinite;
+}
+
+@keyframes sh-spinner-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/*
+ * Slowed rather than stopped. A spinner's whole meaning is its motion — a
+ * frozen broken ring conveys nothing at all — so this reduces the motion
+ * instead of removing it.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .sh-spinner__ring {
+    animation-duration: 2s;
+  }
+}
+
+.sh-spinner__label {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-subtle);
+}
+
+/* Kept in the accessibility tree, out of the visual one. */
+.sh-spinner__label--visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+/* Sizes — border scales with the ring so the stroke stays proportional. */
+.sh-spinner--sm .sh-spinner__ring {
+  width: 14px;
+  height: 14px;
+  border-width: 2px;
+}
+
+.sh-spinner--md .sh-spinner__ring {
+  width: 20px;
+  height: 20px;
+  border-width: 2px;
+}
+
+.sh-spinner--lg .sh-spinner__ring {
+  width: 28px;
+  height: 28px;
+  border-width: 3px;
+}
