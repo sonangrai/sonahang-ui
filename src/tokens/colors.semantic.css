@@ -31,6 +31,18 @@
 
   --color-danger: var(--color-danger-700);
   --color-danger-border: var(--color-danger-500);
+
+  /*
+   * Accent tints — a four-step ladder of the accent hue for tinted surfaces
+   * that need to differ by emphasis rather than by colour, keeping the mono
+   * scheme intact. `-on-tint` is a single foreground chosen to clear 4.5:1
+   * against every step, so any tint can be used without re-checking contrast.
+   */
+  --color-accent-tint-1: var(--color-accent-50);
+  --color-accent-tint-2: var(--color-accent-100);
+  --color-accent-tint-3: var(--color-accent-200);
+  --color-accent-tint-4: var(--color-accent-300);
+  --color-accent-on-tint: var(--color-accent-900);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -53,6 +65,12 @@
 
     --color-danger: var(--color-danger-300);
     --color-danger-border: var(--color-danger-400);
+
+    --color-accent-tint-1: var(--color-accent-950);
+    --color-accent-tint-2: var(--color-accent-900);
+    --color-accent-tint-3: var(--color-accent-800);
+    --color-accent-tint-4: var(--color-accent-700);
+    --color-accent-on-tint: var(--color-accent-100);
   }
 }
 
@@ -75,4 +93,10 @@
 
   --color-danger: var(--color-danger-300);
   --color-danger-border: var(--color-danger-400);
+
+  --color-accent-tint-1: var(--color-accent-950);
+  --color-accent-tint-2: var(--color-accent-900);
+  --color-accent-tint-3: var(--color-accent-800);
+  --color-accent-tint-4: var(--color-accent-700);
+  --color-accent-on-tint: var(--color-accent-100);
 }

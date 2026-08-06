@@ -1,0 +1,119 @@
+/*
+ * Don't inherit the consumer's box model — the published stylesheet ships no
+ * reset, and the banner and its dismiss button are sized with padding.
+ */
+.sh-alert,
+.sh-alert__icon,
+.sh-alert__dismiss {
+  box-sizing: border-box;
+}
+
+.sh-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-family: var(--font-family-sans);
+  /*
+   * Borderless — the tinted surface alone separates the banner from the page.
+   * Variants differ only in which step of the accent tint ladder they sit on,
+   * so each rule below sets one property and the icon, title, body, and
+   * dismiss button all inherit the shared foreground.
+   */
+  background-color: var(--sh-alert-bg);
+  color: var(--color-accent-200);
+}
+
+.sh-alert__icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  /* Optical alignment with the first line of text, not the box. */
+  margin-top: 1px;
+}
+
+.sh-alert__icon > svg {
+  width: 100%;
+  height: 100%;
+}
+
+.sh-alert__content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sh-alert__title {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+}
+
+/*
+ * Inherits the shared foreground rather than falling back to --color-text:
+ * that one is only guaranteed to contrast against the page background, not
+ * against a tinted surface. `-on-tint` is picked to clear every tint step.
+ */
+.sh-alert__body {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+}
+
+.sh-alert__dismiss {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background-color: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.sh-alert__dismiss > svg {
+  width: 12px;
+  height: 12px;
+}
+
+.sh-alert__dismiss:hover {
+  background-color: color-mix(in srgb, currentColor 18%, transparent);
+}
+
+.sh-alert__dismiss:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+}
+
+/*
+ * Variants step through the accent tint ladder rather than changing hue, so
+ * emphasis rises with severity while the palette stays mono. Because colour no
+ * longer separates the variants, the icon and title are what actually tell
+ * them apart — which is the accessible arrangement anyway, since colour should
+ * never be the only carrier of meaning.
+ */
+.sh-alert--info {
+  --sh-alert-bg: var(--color-neutral-800);
+}
+
+.sh-alert--success {
+  --sh-alert-bg: var(--color-accent-900);
+}
+
+.sh-alert--warning {
+  --sh-alert-bg: var(--color-accent-800);
+}
+
+.sh-alert--error {
+  --sh-alert-bg: var(--color-neutral-800);
+}
