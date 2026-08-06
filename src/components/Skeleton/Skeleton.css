@@ -1,0 +1,98 @@
+/*
+ * Don't inherit the consumer's box model — the published stylesheet ships no
+ * reset, and these are sized by explicit width/height.
+ */
+.sh-skeleton,
+.sh-skeleton-lines {
+  box-sizing: border-box;
+}
+
+.sh-skeleton {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-bg-subtle);
+}
+
+.sh-skeleton-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Variants */
+.sh-skeleton--text {
+  /*
+   * Sized in `em` so a line matches the type it stands in for, and given a
+   * little vertical margin so stacked lines sit like real text.
+   */
+  width: 100%;
+  height: 1em;
+  border-radius: 4px;
+  transform: scale(1, 0.7);
+  transform-origin: center;
+}
+
+.sh-skeleton--rectangular {
+  width: 100%;
+  height: 120px;
+  border-radius: 8px;
+}
+
+.sh-skeleton--circular {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+/* Pulse — the whole block fades in and out. */
+.sh-skeleton--pulse {
+  animation: sh-skeleton-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes sh-skeleton-pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/*
+ * Wave — a highlight sweeping across. The overlay is a pseudo-element rather
+ * than an animated background-position: transform is compositor-friendly,
+ * background-position is not.
+ */
+.sh-skeleton--wave::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--color-bg-canvas) 60%, transparent),
+    transparent
+  );
+  animation: sh-skeleton-wave 1.6s linear infinite;
+}
+
+@keyframes sh-skeleton-wave {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/*
+ * Perpetual motion is exactly what this setting is for. The placeholder still
+ * reads as a placeholder without it — unlike a spinner, the shape alone
+ * carries the meaning — so both animations stop outright.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .sh-skeleton--pulse {
+    animation: none;
+  }
+
+  .sh-skeleton--wave::after {
+    animation: none;
+    content: none;
+  }
+}
