@@ -1,0 +1,209 @@
+/*
+ * Don't inherit the consumer's box model — the published stylesheet ships no
+ * reset, and the drop zone sets both padding and a border.
+ */
+.sh-filedrop,
+.sh-filedrop__dropzone,
+.sh-filedrop__file,
+.sh-filedrop__file-remove {
+  box-sizing: border-box;
+}
+
+.sh-filedrop {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: var(--font-family-sans);
+}
+
+.sh-filedrop__label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+}
+
+.sh-filedrop__dropzone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  border: 1px dashed var(--color-border-strong);
+  border-radius: 10px;
+  background-color: var(--color-bg-canvas);
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.sh-filedrop__dropzone:hover {
+  border-color: var(--color-accent);
+  background-color: var(--color-bg-surface);
+}
+
+/*
+ * Visually hidden but still focusable and still the real control — the zone
+ * beside it is what's painted.
+ */
+.sh-filedrop__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+/* The input is invisible, so the ring has to go on the painted zone. */
+.sh-filedrop__input:focus-visible + .sh-filedrop__prompt {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 6px;
+  border-radius: 4px;
+}
+
+.sh-filedrop__prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.sh-filedrop__icon {
+  width: 24px;
+  height: 24px;
+  color: var(--color-text-subtle);
+}
+
+.sh-filedrop__placeholder {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+}
+
+.sh-filedrop__accept {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-subtle);
+}
+
+/* Active drag */
+.sh-filedrop--dragging .sh-filedrop__dropzone {
+  border-color: var(--color-accent);
+  border-style: solid;
+  background-color: var(--color-accent-subtle-bg);
+}
+
+.sh-filedrop--dragging .sh-filedrop__icon,
+.sh-filedrop--dragging .sh-filedrop__placeholder {
+  color: var(--color-accent-subtle-text);
+}
+
+/* Invalid */
+.sh-filedrop--invalid .sh-filedrop__dropzone {
+  border-color: var(--color-danger-border);
+}
+
+.sh-filedrop--invalid .sh-filedrop__message {
+  color: var(--color-danger);
+}
+
+/* Disabled */
+.sh-filedrop--disabled .sh-filedrop__dropzone {
+  cursor: not-allowed;
+  opacity: 0.5;
+  background-color: var(--color-bg-subtle);
+}
+
+.sh-filedrop--disabled .sh-filedrop__dropzone:hover {
+  border-color: var(--color-border-strong);
+  background-color: var(--color-bg-subtle);
+}
+
+.sh-filedrop--disabled .sh-filedrop__label {
+  color: var(--color-text-subtle);
+}
+
+/* Selected files */
+.sh-filedrop__files {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sh-filedrop__file {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px 6px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background-color: var(--color-bg-surface);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+}
+
+.sh-filedrop__file-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-text);
+}
+
+.sh-filedrop__file-size {
+  flex-shrink: 0;
+  color: var(--color-text-subtle);
+  font-variant-numeric: tabular-nums;
+}
+
+.sh-filedrop__file-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background-color: transparent;
+  color: var(--color-text-subtle);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.sh-filedrop__file-remove > svg {
+  width: 12px;
+  height: 12px;
+}
+
+.sh-filedrop__file-remove:not(:disabled):hover {
+  background-color: var(--color-bg-subtle);
+  color: var(--color-text);
+}
+
+.sh-filedrop__file-remove:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.sh-filedrop__file-remove:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+.sh-filedrop__message {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-subtle);
+}
