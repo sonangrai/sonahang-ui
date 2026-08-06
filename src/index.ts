@@ -38,6 +38,9 @@ export type { CheckboxProps, CheckboxGroupProps } from './components/Checkbox';
 export { Radio, RadioGroup } from './components/Radio';
 export type { RadioProps, RadioGroupProps } from './components/Radio';
 
+export { Spinner, spinnerSizes } from './components/Spinner';
+export type { SpinnerProps, SpinnerSize } from './components/Spinner';
+
 export { ProgressBar, progressBarSizes } from './components/ProgressBar';
 export type { ProgressBarProps, ProgressBarSize } from './components/ProgressBar';
 
