@@ -38,6 +38,9 @@ export type { CheckboxProps, CheckboxGroupProps } from './components/Checkbox';
 export { Radio, RadioGroup } from './components/Radio';
 export type { RadioProps, RadioGroupProps } from './components/Radio';
 
+export { FileDrop, isFileAccepted, formatFileSize } from './components/FileDrop';
+export type { FileDropProps } from './components/FileDrop';
+
 export { RangeSlider } from './components/RangeSlider';
 export type { RangeSliderProps } from './components/RangeSlider';
 
