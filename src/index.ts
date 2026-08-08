@@ -38,6 +38,16 @@ export type { CheckboxProps, CheckboxGroupProps } from './components/Checkbox';
 export { Radio, RadioGroup } from './components/Radio';
 export type { RadioProps, RadioGroupProps } from './components/Radio';
 
+export { Tabs, TabList, Tab, TabPanel } from './components/Tabs';
+export type {
+  TabsProps,
+  TabListProps,
+  TabProps,
+  TabPanelProps,
+  TabsOrientation,
+  TabsActivation,
+} from './components/Tabs';
+
 export { Skeleton, skeletonVariants, skeletonAnimations } from './components/Skeleton';
 export type { SkeletonProps, SkeletonVariant, SkeletonAnimation } from './components/Skeleton';
 

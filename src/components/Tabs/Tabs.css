@@ -1,0 +1,135 @@
+/*
+ * Don't inherit the consumer's box model — the published stylesheet ships no
+ * reset, and the tabs are sized with padding plus a selected-state border.
+ */
+.sh-tabs,
+.sh-tabs__list,
+.sh-tabs__tab,
+.sh-tabs__panel {
+  box-sizing: border-box;
+}
+
+.sh-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-family: var(--font-family-sans);
+}
+
+.sh-tabs--vertical {
+  flex-direction: row;
+  gap: 24px;
+}
+
+.sh-tabs__list {
+  position: relative;
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+/*
+ * One indicator that slides between tabs, rather than a border on each tab.
+ * A per-tab indicator can't animate across to a different element, and a
+ * border would change the tab's box and shift the row on every selection.
+ *
+ * Position and length come from JS: tabs are content-sized, so unlike
+ * SegmentedControl's equal-width segments they can't be derived in CSS.
+ */
+.sh-tabs__indicator {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: var(--sh-tabs-indicator-size, 0);
+  height: 2px;
+  transform: translateX(var(--sh-tabs-indicator-offset, 0));
+  border-radius: 2px 2px 0 0;
+  background-color: var(--color-accent);
+  pointer-events: none;
+}
+
+/* Only after the first measurement, so it doesn't fly in from the left. */
+.sh-tabs__indicator--animated {
+  transition:
+    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sh-tabs--vertical .sh-tabs__indicator {
+  left: auto;
+  right: -1px;
+  bottom: auto;
+  top: 0;
+  width: 2px;
+  height: var(--sh-tabs-indicator-size, 0);
+  transform: translateY(var(--sh-tabs-indicator-offset, 0));
+  border-radius: 2px 0 0 2px;
+}
+
+.sh-tabs--vertical .sh-tabs__indicator--animated {
+  transition:
+    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    height 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sh-tabs__indicator--animated {
+    transition: none;
+  }
+}
+
+.sh-tabs--vertical .sh-tabs__list {
+  flex-direction: column;
+  flex-shrink: 0;
+  border-bottom: none;
+  border-right: 1px solid var(--color-border);
+}
+
+.sh-tabs__tab {
+  position: relative;
+  padding: 8px 14px;
+  border: none;
+  background-color: transparent;
+  color: var(--color-text-subtle);
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.sh-tabs__tab:not(:disabled):hover {
+  color: var(--color-text);
+}
+
+.sh-tabs__tab--selected {
+  color: var(--color-accent);
+}
+
+.sh-tabs__tab:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sh-tabs__tab:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
+  border-radius: 6px;
+}
+
+.sh-tabs__panel {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+}
+
+/* Focusable for scrolling, but it shouldn't look like a focused control. */
+.sh-tabs__panel:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
