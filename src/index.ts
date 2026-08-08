@@ -38,6 +38,9 @@ export type { CheckboxProps, CheckboxGroupProps } from './components/Checkbox';
 export { Radio, RadioGroup } from './components/Radio';
 export type { RadioProps, RadioGroupProps } from './components/Radio';
 
+export { Breadcrumb, BreadcrumbItem } from './components/Breadcrumb';
+export type { BreadcrumbProps, BreadcrumbItemProps } from './components/Breadcrumb';
+
 export { Tabs, TabList, Tab, TabPanel } from './components/Tabs';
 export type {
   TabsProps,

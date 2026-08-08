@@ -1,0 +1,74 @@
+/*
+ * Don't inherit the consumer's box model — the published stylesheet ships no
+ * reset, and the list needs its browser padding cleared regardless.
+ */
+.sh-breadcrumb,
+.sh-breadcrumb__list,
+.sh-breadcrumb__item {
+  box-sizing: border-box;
+}
+
+.sh-breadcrumb {
+  font-family: var(--font-family-sans);
+}
+
+.sh-breadcrumb__list {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  /* The ol's default list styling would otherwise show through. */
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sh-breadcrumb__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+}
+
+.sh-breadcrumb__link {
+  color: var(--color-text-subtle);
+  text-decoration: none;
+  border-radius: 4px;
+  transition: color 0.15s ease;
+}
+
+.sh-breadcrumb__link:hover {
+  color: var(--color-text);
+  text-decoration: underline;
+}
+
+.sh-breadcrumb__link:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.sh-breadcrumb__text {
+  color: var(--color-text-subtle);
+}
+
+.sh-breadcrumb__current {
+  color: var(--color-text);
+  font-weight: var(--font-weight-medium);
+}
+
+.sh-breadcrumb__separator {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--color-text-subtle);
+  /* Never the click target for the crumb either side of it. */
+  pointer-events: none;
+  user-select: none;
+}
+
+.sh-breadcrumb__separator > svg {
+  width: 14px;
+  height: 14px;
+}
