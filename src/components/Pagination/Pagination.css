@@ -1,0 +1,104 @@
+/*
+ * Don't inherit the consumer's box model — the published stylesheet ships no
+ * reset, and the buttons are fixed squares with a border.
+ */
+.sh-pagination,
+.sh-pagination__list,
+.sh-pagination__page,
+.sh-pagination__control {
+  box-sizing: border-box;
+}
+
+.sh-pagination {
+  font-family: var(--font-family-sans);
+}
+
+.sh-pagination__list {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  /* The ul's default list styling would otherwise show through. */
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sh-pagination__item {
+  display: inline-flex;
+}
+
+/*
+ * Page and nav buttons share a footprint so the row stays on one rhythm and
+ * doesn't jog as the digits change width.
+ */
+.sh-pagination__page,
+.sh-pagination__control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 6px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background-color: transparent;
+  color: var(--color-text-subtle);
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.sh-pagination__page:not(:disabled):hover,
+.sh-pagination__control:not(:disabled):hover {
+  background-color: var(--color-bg-subtle);
+  color: var(--color-text);
+}
+
+.sh-pagination__page:focus-visible,
+.sh-pagination__control:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+.sh-pagination__page:disabled,
+.sh-pagination__control:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/*
+ * The current page is outlined rather than filled: this row can hold a dozen
+ * controls, and a solid block would dominate everything around it.
+ */
+.sh-pagination__page--current {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.sh-pagination__page--current:not(:disabled):hover {
+  background-color: transparent;
+  color: var(--color-accent);
+}
+
+.sh-pagination__control > svg {
+  width: 16px;
+  height: 16px;
+}
+
+.sh-pagination__ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  color: var(--color-text-subtle);
+  user-select: none;
+}

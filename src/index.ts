@@ -38,6 +38,13 @@ export type { CheckboxProps, CheckboxGroupProps } from './components/Checkbox';
 export { Radio, RadioGroup } from './components/Radio';
 export type { RadioProps, RadioGroupProps } from './components/Radio';
 
+export { Pagination, getPaginationRange } from './components/Pagination';
+export type {
+  PaginationProps,
+  PaginationItem,
+  PaginationRangeOptions,
+} from './components/Pagination';
+
 export { Breadcrumb, BreadcrumbItem } from './components/Breadcrumb';
 export type { BreadcrumbProps, BreadcrumbItemProps } from './components/Breadcrumb';
 
