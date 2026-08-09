@@ -1,0 +1,142 @@
+/*
+ * Don't inherit the consumer's box model — the published stylesheet ships no
+ * reset, and the control sets both padding and a border.
+ *
+ * Mirrors Input.css deliberately: the two sit side by side in forms and must
+ * match. If a fourth field type lands, extract a shared `sh-field` block.
+ */
+.sh-select,
+.sh-select__field,
+.sh-select__control,
+.sh-select__label {
+  box-sizing: border-box;
+}
+
+.sh-select {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: var(--font-family-sans);
+}
+
+.sh-select__label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+}
+
+.sh-select__required {
+  margin-left: 2px;
+  color: var(--color-danger);
+}
+
+/* Positioning context for the icon and chevron, which overlay the control. */
+.sh-select__field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.sh-select__control {
+  /* Strip the platform styling so the chevron below is the only indicator. */
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  /* Right padding leaves room for the chevron. */
+  padding: 8px 34px 8px 12px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 8px;
+  background-color: var(--color-bg-canvas);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    outline-color 0.15s ease;
+}
+
+.sh-select--with-icon .sh-select__control {
+  padding-left: 36px;
+}
+
+/* A list box sizes itself by `size`/`multiple`; no chevron gutter needed. */
+.sh-select--multiple .sh-select__control {
+  padding-right: 12px;
+  cursor: default;
+}
+
+.sh-select__control:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+  border-color: var(--color-accent);
+}
+
+.sh-select__control:disabled {
+  background-color: var(--color-bg-subtle);
+  color: var(--color-text-subtle);
+  cursor: not-allowed;
+}
+
+/*
+ * The OS draws the open list, so options can't be styled — but leaving them
+ * unset makes them inherit a transparent background in some browsers.
+ */
+.sh-select__control option {
+  color: var(--color-text);
+  background-color: var(--color-bg-canvas);
+}
+
+.sh-select__icon,
+.sh-select__chevron {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: var(--color-text-subtle);
+  /* Decorative — let clicks fall through and open the select. */
+  pointer-events: none;
+}
+
+.sh-select__icon > svg,
+.sh-select__chevron > svg {
+  width: 100%;
+  height: 100%;
+}
+
+.sh-select__icon {
+  left: 12px;
+}
+
+.sh-select__chevron {
+  right: 12px;
+}
+
+.sh-select--disabled .sh-select__icon,
+.sh-select--disabled .sh-select__chevron,
+.sh-select--disabled .sh-select__label {
+  color: var(--color-text-subtle);
+}
+
+.sh-select__message {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-subtle);
+}
+
+/* Invalid state */
+.sh-select--invalid .sh-select__control {
+  border-color: var(--color-danger-border);
+}
+
+.sh-select--invalid .sh-select__control:focus-visible {
+  outline-color: var(--color-danger-border);
+}
+
+.sh-select--invalid .sh-select__message {
+  color: var(--color-danger);
+}
