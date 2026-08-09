@@ -29,6 +29,9 @@ export type { AvatarProps, AvatarGroupProps, AvatarSize } from './components/Ava
 export { Input } from './components/Input';
 export type { InputProps } from './components/Input';
 
+export { Select } from './components/Select';
+export type { SelectProps, SelectOption, SelectOptionGroup } from './components/Select';
+
 export { Textarea } from './components/Textarea';
 export type { TextareaProps, TextareaResize } from './components/Textarea';
 
