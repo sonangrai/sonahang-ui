@@ -51,10 +51,36 @@ export const Placements: Story = {
   ),
 };
 
+/*
+ * Buttons pinned to the edges of the viewport, so `auto` has a real decision
+ * to make. Anything centred in a cell has room above it and simply gets `top`,
+ * which is what an earlier version of this story accidentally demonstrated.
+ */
+const EDGES = [
+  ["start", "start"],
+  ["start", "center"],
+  ["start", "end"],
+  ["center", "start"],
+  ["center", "center"],
+  ["center", "end"],
+  ["end", "start"],
+  ["end", "center"],
+  ["end", "end"],
+] as const;
+
+const edgeLabel = (block: string, inline: string) =>
+  [block === "start" ? "top" : block === "end" ? "bottom" : "", inline === "start" ? "left" : inline === "end" ? "right" : ""]
+    .filter(Boolean)
+    .join(" ") || "middle";
+
 /**
- * `placement="auto"` measures the trigger against the viewport when the tip
- * opens, and re-measures on scroll and resize. Hover the corner buttons — each
- * tip turns inward. Shrink the preview pane to watch them move.
+ * `placement="auto"` measures the trigger against the viewport each time the
+ * tip opens, then re-measures on scroll and resize.
+ *
+ * The top row flips below its triggers — there's nothing above them. Everything
+ * else keeps `top`, which is correct: a side is only chosen once neither
+ * vertical direction fits, and that takes a genuinely short viewport. Drag the
+ * preview pane short to see the middle row swing out sideways.
  */
 export const AutoPlacement: Story = {
   name: "Auto placement",
@@ -64,28 +90,52 @@ export const AutoPlacement: Story = {
       style={{
         display: "grid",
         gridTemplate: "repeat(3, 1fr) / repeat(3, 1fr)",
-        placeItems: "center",
-        gap: 8,
-        height: "90vh",
-        padding: 8,
+        height: "100vh",
       }}
     >
-      {["top left", "top", "top right", "left", "middle", "right", "bottom left", "bottom", "bottom right"].map(
-        (position) => (
-          <Tooltip
-            key={position}
-            {...args}
-            placement="auto"
-            content={`Nearest edge: ${position}`}
-          >
-            <Button variant="secondary" size="sm">
-              {position}
-            </Button>
-          </Tooltip>
-        ),
-      )}
+      {EDGES.map(([block, inline]) => (
+        <Tooltip
+          key={`${block}-${inline}`}
+          {...args}
+          placement="auto"
+          content={`Pinned ${edgeLabel(block, inline)}`}
+          style={{ alignSelf: block, justifySelf: inline }}
+        >
+          <Button variant="secondary" size="sm">
+            {edgeLabel(block, inline)}
+          </Button>
+        </Tooltip>
+      ))}
     </div>
   ),
+};
+
+/**
+ * The measurement isn't taken once and forgotten. With the tip held open,
+ * scroll the page: the trigger climbs towards the top edge and the tip drops
+ * below it the moment there's no longer room above.
+ */
+export const AutoFollowsScrolling: Story = {
+  name: "Auto follows scrolling",
+  parameters: { controls: { disable: true }, layout: "fullscreen" },
+  render: () => {
+    const [open, setOpen] = useState(true);
+
+    return (
+      <div style={{ height: "220vh", padding: "85vh 24px 0" }}>
+        <div style={{ position: "fixed", top: 12, right: 12 }}>
+          <Button size="sm" onClick={() => setOpen((value) => !value)}>
+            {open ? "Hide tip" : "Show tip"}
+          </Button>
+        </div>
+
+        {/* Held open from outside, so the pointer is free to scroll. */}
+        <Tooltip placement="auto" content="Nowhere left to go — flipping below" open={open}>
+          <Button variant="secondary">Scroll the page</Button>
+        </Tooltip>
+      </div>
+    );
+  },
 };
 
 /** The main job: naming a control that only shows an icon. */
