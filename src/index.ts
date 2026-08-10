@@ -65,6 +65,14 @@ export type {
   PaginationRangeOptions,
 } from './components/Pagination';
 
+export { Accordion, AccordionItem } from './components/Accordion';
+export type {
+  AccordionProps,
+  AccordionItemProps,
+  AccordionType,
+  AccordionHeadingLevel,
+} from './components/Accordion';
+
 export { Stepper, Step } from './components/Stepper';
 export type { StepperProps, StepProps, StepperOrientation, StepStatus } from './components/Stepper';
 
