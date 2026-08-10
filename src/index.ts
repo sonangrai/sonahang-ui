@@ -46,6 +46,9 @@ export type {
   DropdownAlign,
 } from './components/Dropdown';
 
+export { Tooltip } from './components/Tooltip';
+export type { TooltipProps, TooltipPlacement } from './components/Tooltip';
+
 export { Select } from './components/Select';
 export type { SelectProps, SelectOption, SelectOptionGroup } from './components/Select';
 
