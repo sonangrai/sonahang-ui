@@ -29,6 +29,23 @@ export type { AvatarProps, AvatarGroupProps, AvatarSize } from './components/Ava
 export { Input } from './components/Input';
 export type { InputProps } from './components/Input';
 
+export {
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+  DropdownSeparator,
+} from './components/Dropdown';
+export type {
+  DropdownProps,
+  DropdownTriggerProps,
+  DropdownMenuProps,
+  DropdownItemProps,
+  DropdownSeparatorProps,
+  DropdownPlacement,
+  DropdownAlign,
+} from './components/Dropdown';
+
 export { Select } from './components/Select';
 export type { SelectProps, SelectOption, SelectOptionGroup } from './components/Select';
 
