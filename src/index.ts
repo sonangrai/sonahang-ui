@@ -65,6 +65,9 @@ export type {
   PaginationRangeOptions,
 } from './components/Pagination';
 
+export { Stepper, Step } from './components/Stepper';
+export type { StepperProps, StepProps, StepperOrientation, StepStatus } from './components/Stepper';
+
 export { Breadcrumb, BreadcrumbItem } from './components/Breadcrumb';
 export type { BreadcrumbProps, BreadcrumbItemProps } from './components/Breadcrumb';
 
