@@ -1,0 +1,212 @@
+/*
+ * Don't inherit the consumer's box model — the published stylesheet ships no
+ * reset, and the indicator is a fixed circle with a border.
+ */
+.sh-stepper,
+.sh-step,
+.sh-step__body,
+.sh-step__indicator {
+  box-sizing: border-box;
+}
+
+.sh-stepper {
+  display: flex;
+  /* The ol's default list styling would otherwise show through. */
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-family-sans);
+}
+
+.sh-stepper--horizontal {
+  flex-direction: row;
+  align-items: flex-start;
+  /*
+   * Separates the connector from the *next* step's indicator. Matches the
+   * gap inside `.sh-step` (body → connector) so the line has equal space at
+   * both ends instead of running flush into the following number.
+   */
+  gap: 12px;
+}
+
+.sh-stepper--vertical {
+  flex-direction: column;
+}
+
+/*
+ * The gap here sits between the step's body and its connector. It only
+ * applies horizontally — the vertical connector is absolutely positioned and
+ * so out of flex flow.
+ */
+.sh-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+}
+
+.sh-step__body {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  text-align: left;
+}
+
+.sh-step__body--interactive {
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.sh-step__body--interactive:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+.sh-step__body--interactive:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sh-step__indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--color-border-strong);
+  border-radius: 50%;
+  color: var(--color-text-subtle);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.sh-step__indicator > svg {
+  width: 16px;
+  height: 16px;
+}
+
+.sh-step__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  /* Optical alignment with the middle of the 28px indicator. */
+  padding-top: 3px;
+}
+
+.sh-step__title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-subtle);
+}
+
+.sh-step__description {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-subtle);
+}
+
+.sh-step__connector {
+  background-color: var(--color-border);
+}
+
+/* --- Status ------------------------------------------------------------- */
+.sh-step--current .sh-step__indicator {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.sh-step--current .sh-step__title {
+  color: var(--color-text);
+  font-weight: var(--font-weight-semibold);
+}
+
+/*
+ * Filled rather than outlined, so completion reads at a glance. The canvas
+ * colour for the glyph keeps contrast in both themes without a new token —
+ * the accent is dark on light and light on dark, and the canvas inverts with it.
+ */
+.sh-step--complete .sh-step__indicator {
+  border-color: var(--color-accent);
+  background-color: var(--color-accent);
+  color: var(--color-bg-canvas);
+}
+
+.sh-step--complete .sh-step__title {
+  color: var(--color-text);
+}
+
+.sh-step--complete .sh-step__connector {
+  background-color: var(--color-accent);
+}
+
+.sh-step--error .sh-step__indicator {
+  border-color: var(--color-danger-border);
+  color: var(--color-danger);
+}
+
+.sh-step--error .sh-step__title {
+  color: var(--color-danger);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* --- Horizontal --------------------------------------------------------- */
+/*
+ * Each step takes an equal share and its connector fills the gap to the next
+ * indicator. The last has no connector, so it shrinks to its content instead
+ * of claiming a share it can't use.
+ */
+.sh-step--horizontal {
+  flex: 1;
+}
+
+.sh-step--horizontal.sh-step--last {
+  flex: 0 1 auto;
+}
+
+.sh-step--horizontal .sh-step__connector {
+  flex: 1;
+  height: 2px;
+  border-radius: 1px;
+  /* Half the indicator, less half the connector, to meet its centre. */
+  margin-top: 13px;
+  min-width: 16px;
+}
+
+/* --- Vertical ----------------------------------------------------------- */
+/*
+ * The connector is absolutely positioned here rather than flexed: it has to
+ * run down the gutter beside the text, whose height varies with the
+ * description, so it can't be a sibling in the same row.
+ */
+.sh-step--vertical {
+  position: relative;
+  padding-bottom: 24px;
+}
+
+.sh-step--vertical.sh-step--last {
+  padding-bottom: 0;
+}
+
+.sh-step--vertical .sh-step__connector {
+  position: absolute;
+  /* Centre of the 28px indicator, less half the 2px line. */
+  left: 13px;
+  top: 34px;
+  bottom: 6px;
+  width: 2px;
+  border-radius: 1px;
+}
