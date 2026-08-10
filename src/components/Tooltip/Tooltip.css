@@ -45,6 +45,7 @@
    */
   transition:
     opacity 0.15s ease,
+    transform 0.15s ease,
     visibility 0s linear 0.15s;
 }
 
@@ -53,32 +54,56 @@
   visibility: visible;
   transition:
     opacity 0.15s ease,
+    transform 0.15s ease,
     visibility 0s;
 }
 
-/* Placement — 8px of separation, leaving room for the arrow. */
+/*
+ * Placement — 8px of separation, leaving room for the arrow.
+ *
+ * Each side needs its transform written twice because the reveal lift shares
+ * the property with the centring offset: closed sits 4px low, open sits where
+ * it belongs, and the pair is what the transition interpolates between. The
+ * open rules win on specificity, so order here doesn't matter.
+ */
 .sh-tooltip__tip--top {
   bottom: calc(100% + 8px);
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, 4px);
+}
+
+.sh-tooltip__tip--top.sh-tooltip__tip--open {
+  transform: translate(-50%, 0);
 }
 
 .sh-tooltip__tip--bottom {
   top: calc(100% + 8px);
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, 4px);
+}
+
+.sh-tooltip__tip--bottom.sh-tooltip__tip--open {
+  transform: translate(-50%, 0);
 }
 
 .sh-tooltip__tip--left {
   right: calc(100% + 8px);
   top: 50%;
-  transform: translateY(-50%);
+  transform: translate(0, calc(-50% + 4px));
+}
+
+.sh-tooltip__tip--left.sh-tooltip__tip--open {
+  transform: translate(0, -50%);
 }
 
 .sh-tooltip__tip--right {
   left: calc(100% + 8px);
   top: 50%;
-  transform: translateY(-50%);
+  transform: translate(0, calc(-50% + 4px));
+}
+
+.sh-tooltip__tip--right.sh-tooltip__tip--open {
+  transform: translate(0, -50%);
 }
 
 /* Arrow: a square of the tip's own colour, rotated and half-buried. */
@@ -123,5 +148,16 @@
   .sh-tooltip__tip,
   .sh-tooltip__tip--open {
     transition: none;
+  }
+
+  /* Drop the lift as well, so the tip appears in place rather than jumping. */
+  .sh-tooltip__tip--top,
+  .sh-tooltip__tip--bottom {
+    transform: translate(-50%, 0);
+  }
+
+  .sh-tooltip__tip--left,
+  .sh-tooltip__tip--right {
+    transform: translate(0, -50%);
   }
 }

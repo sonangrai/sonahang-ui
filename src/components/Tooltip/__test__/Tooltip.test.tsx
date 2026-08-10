@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { Tooltip } from "../Tooltip";
 import type { TooltipProps } from "../Tooltip";
@@ -341,6 +341,96 @@ describe("Tooltip", () => {
       ).toThrow("<Tooltip> expects a single element child to describe.");
 
       spy.mockRestore();
+    });
+  });
+
+  describe("auto placement", () => {
+    /*
+     * jsdom has no layout, so every rect is zero and every element is 0x0.
+     * These stub the measurements the component reads, which is enough to
+     * prove the wiring — the arithmetic itself is covered against
+     * resolveTooltipPlacement directly.
+     */
+    const stubLayout = (trigger: Partial<DOMRect>, tipSize = { width: 200, height: 40 }) => {
+      vi.spyOn(HTMLElement.prototype, "offsetWidth", "get").mockReturnValue(tipSize.width);
+      vi.spyOn(HTMLElement.prototype, "offsetHeight", "get").mockReturnValue(tipSize.height);
+      vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(
+        function (this: HTMLElement) {
+          return { top: 0, bottom: 0, left: 0, right: 0, ...trigger } as DOMRect;
+        },
+      );
+    };
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it("puts the tip on top when there is room above", async () => {
+      stubLayout({ top: 400, bottom: 420, left: 400, right: 500 });
+      const user = userEvent.setup();
+      render(<Target placement="auto" />);
+
+      await user.hover(trigger());
+
+      expect(tip()).toHaveClass("sh-tooltip__tip--top");
+    });
+
+    it("flips below a trigger near the top edge", async () => {
+      stubLayout({ top: 4, bottom: 24, left: 400, right: 500 });
+      const user = userEvent.setup();
+      render(<Target placement="auto" />);
+
+      await user.hover(trigger());
+
+      expect(tip()).toHaveClass("sh-tooltip__tip--bottom");
+    });
+
+    it("measures the tip, not just the trigger's position", async () => {
+      // 100px above the trigger is plenty for a short tip and nowhere near
+      // enough for a tall one.
+      stubLayout({ top: 100, bottom: 120, left: 400, right: 500 }, { width: 200, height: 200 });
+      const user = userEvent.setup();
+      render(<Target placement="auto" />);
+
+      await user.hover(trigger());
+
+      expect(tip()).toHaveClass("sh-tooltip__tip--bottom");
+    });
+
+    it("never leaves auto in the class name", async () => {
+      stubLayout({ top: 400, bottom: 420, left: 400, right: 500 });
+      const user = userEvent.setup();
+      render(<Target placement="auto" />);
+
+      await user.hover(trigger());
+
+      expect(tip()?.className).not.toContain("--auto");
+    });
+
+    it("re-measures when the viewport changes", async () => {
+      stubLayout({ top: 400, bottom: 420, left: 400, right: 500 });
+      const user = userEvent.setup();
+      render(<Target placement="auto" />);
+
+      await user.hover(trigger());
+      expect(tip()).toHaveClass("sh-tooltip__tip--top");
+
+      // The trigger has scrolled up against the top edge.
+      stubLayout({ top: 4, bottom: 24, left: 400, right: 500 });
+      window.dispatchEvent(new Event("resize"));
+
+      await waitFor(() => expect(tip()).toHaveClass("sh-tooltip__tip--bottom"));
+    });
+
+    it("leaves a fixed placement alone", async () => {
+      stubLayout({ top: 4, bottom: 24, left: 400, right: 500 });
+      const user = userEvent.setup();
+      render(<Target placement="top" />);
+
+      await user.hover(trigger());
+
+      // No room above, but the caller asked for top and gets it.
+      expect(tip()).toHaveClass("sh-tooltip__tip--top");
     });
   });
 

@@ -12,7 +12,10 @@ const meta = {
     layout: "centered",
   },
   argTypes: {
-    placement: { control: "inline-radio", options: ["top", "bottom", "left", "right"] },
+    placement: {
+      control: "inline-radio",
+      options: ["auto", "top", "bottom", "left", "right"],
+    },
     delay: { control: { type: "number", min: 0, step: 50 } },
     disabled: { control: "boolean" },
     content: { control: "text" },
@@ -44,6 +47,43 @@ export const Placements: Story = {
           <Button variant="secondary">{placement}</Button>
         </Tooltip>
       ))}
+    </div>
+  ),
+};
+
+/**
+ * `placement="auto"` measures the trigger against the viewport when the tip
+ * opens, and re-measures on scroll and resize. Hover the corner buttons — each
+ * tip turns inward. Shrink the preview pane to watch them move.
+ */
+export const AutoPlacement: Story = {
+  name: "Auto placement",
+  parameters: { controls: { disable: true }, layout: "fullscreen" },
+  render: (args) => (
+    <div
+      style={{
+        display: "grid",
+        gridTemplate: "repeat(3, 1fr) / repeat(3, 1fr)",
+        placeItems: "center",
+        gap: 8,
+        height: "90vh",
+        padding: 8,
+      }}
+    >
+      {["top left", "top", "top right", "left", "middle", "right", "bottom left", "bottom", "bottom right"].map(
+        (position) => (
+          <Tooltip
+            key={position}
+            {...args}
+            placement="auto"
+            content={`Nearest edge: ${position}`}
+          >
+            <Button variant="secondary" size="sm">
+              {position}
+            </Button>
+          </Tooltip>
+        ),
+      )}
     </div>
   ),
 };

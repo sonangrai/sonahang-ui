@@ -1,9 +1,27 @@
-import { cloneElement, isValidElement, useCallback, useEffect, useId, useRef, useState } from "react";
+import {
+  cloneElement,
+  isValidElement,
+  useCallback,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import type { HTMLAttributes, ReactElement, ReactNode } from "react";
 
+import { resolveTooltipPlacement } from "./resolveTooltipPlacement";
+import type { TooltipPlacement, TooltipSide } from "./resolveTooltipPlacement";
 import "./Tooltip.css";
 
-export type TooltipPlacement = "top" | "bottom" | "left" | "right";
+export type { TooltipPlacement, TooltipSide };
+
+/*
+ * Measuring has to happen before paint, or the tip is visible on the wrong
+ * side for a frame. useLayoutEffect warns during server rendering, where
+ * there's no layout to measure in the first place.
+ */
+const useMeasureEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 /** The one prop the tooltip needs to put on its trigger. */
 type TriggerProps = { "aria-describedby"?: string };
@@ -17,7 +35,12 @@ export type TooltipProps = {
   children: ReactElement<TriggerProps>;
   /** Tip body. Nothing renders when this is empty. */
   content?: ReactNode;
-  /** Which side of the trigger the tip sits on. Defaults to `top`. */
+  /**
+   * Which side of the trigger the tip sits on. Defaults to `top`.
+   *
+   * `auto` measures the trigger against the viewport each time the tip opens
+   * and picks a side with room for it.
+   */
   placement?: TooltipPlacement;
   /** Milliseconds to wait before showing on hover. Defaults to 150. */
   delay?: number;
@@ -53,6 +76,8 @@ export function Tooltip({
 }: TooltipProps) {
   const tipId = useId();
   const timerRef = useRef<number | undefined>(undefined);
+  const wrapperRef = useRef<HTMLSpanElement>(null);
+  const tipRef = useRef<HTMLSpanElement>(null);
   /*
    * Set while a press is being handled. A click fires mousedown *then* focus,
    * so without this the focus handler would immediately reopen the tip the
@@ -99,6 +124,44 @@ export function Tooltip({
   useEffect(() => clearTimer, []);
 
   /*
+   * Auto placement. Measured while open rather than once on mount, because the
+   * trigger moves: scrolling it towards an edge should move the tip to the
+   * side that still has room.
+   */
+  const [autoSide, setAutoSide] = useState<TooltipSide>("top");
+  const isAuto = placement === "auto";
+  const side = isAuto ? autoSide : placement;
+
+  useMeasureEffect(() => {
+    if (!isAuto || !isOpen || !hasTip) return;
+
+    const measure = () => {
+      const wrapper = wrapperRef.current;
+      const tip = tipRef.current;
+      if (!wrapper || !tip) return;
+
+      setAutoSide(
+        resolveTooltipPlacement({
+          trigger: wrapper.getBoundingClientRect(),
+          // offsetWidth/Height ignore the reveal transform, unlike the rect.
+          tip: { width: tip.offsetWidth, height: tip.offsetHeight },
+          viewport: { width: window.innerWidth, height: window.innerHeight },
+        }),
+      );
+    };
+
+    measure();
+
+    // Captured, so scrolling any ancestor container counts, not just the page.
+    window.addEventListener("scroll", measure, true);
+    window.addEventListener("resize", measure);
+    return () => {
+      window.removeEventListener("scroll", measure, true);
+      window.removeEventListener("resize", measure);
+    };
+  }, [isAuto, isOpen, hasTip]);
+
+  /*
    * Escape dismisses the tip, per the APG. Bound to the document rather than
    * the trigger because the tip can be open without focus being anywhere near
    * it — hover, or a controlled parent — and an undismissable tip can sit on
@@ -139,6 +202,7 @@ export function Tooltip({
 
   return (
     <span
+      ref={wrapperRef}
       className={["sh-tooltip", className].filter(Boolean).join(" ")}
       onMouseEnter={show}
       onMouseLeave={() => {
@@ -161,11 +225,12 @@ export function Tooltip({
 
       {hasTip && (
         <span
+          ref={tipRef}
           id={tipId}
           role="tooltip"
           className={[
             "sh-tooltip__tip",
-            `sh-tooltip__tip--${placement}`,
+            `sh-tooltip__tip--${side}`,
             isOpen && "sh-tooltip__tip--open",
           ]
             .filter(Boolean)
