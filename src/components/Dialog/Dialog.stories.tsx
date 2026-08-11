@@ -274,6 +274,74 @@ export const TitleOnly: Story = {
 };
 
 /**
+ * `portal` moves the dialog to `document.body`.
+ *
+ * It is *not* what makes a dialog escape `z-index` and `overflow: hidden` —
+ * both triggers here sit inside a clipped, low-stacked, transformed box, and
+ * both render correctly, because `showModal()` puts them in the top layer
+ * either way. Portal when the DOM position itself is the problem: the second
+ * trigger is inside a `<form>`, and only the portalled dialog's submit button
+ * stops posting it.
+ */
+export const InsideAwkwardAncestors: Story = {
+  name: "Inside awkward ancestors",
+  parameters: { controls: { disable: true } },
+  render: () => {
+    const [submitted, setSubmitted] = useState(0);
+
+    const box = {
+      position: "relative" as const,
+      zIndex: 0,
+      overflow: "hidden",
+      transform: "translateZ(0)",
+      width: 260,
+      padding: 16,
+      border: "1px dashed var(--color-border-strong)",
+      borderRadius: 8,
+    };
+
+    return (
+      <div style={{ display: "flex", gap: 16, alignItems: "flex-start", flexWrap: "wrap" }}>
+        <div style={box}>
+          <p style={{ margin: "0 0 12px", fontSize: 12, color: "var(--color-text-subtle)" }}>
+            overflow: hidden · z-index: 0 · transform
+          </p>
+          <DialogDemo
+            triggerLabel="No portal"
+            title="Rendered in place"
+            description="Still on top of everything."
+            footer={(close) => <Button onClick={close}>Close</Button>}
+          >
+            The top layer ignores every ancestor around this trigger.
+          </DialogDemo>
+        </div>
+
+        <form
+          style={box}
+          onSubmit={(event) => {
+            event.preventDefault();
+            setSubmitted((count) => count + 1);
+          }}
+        >
+          <p style={{ margin: "0 0 12px", fontSize: 12, color: "var(--color-text-subtle)" }}>
+            inside a &lt;form&gt; · submits: {submitted}
+          </p>
+          <DialogDemo
+            portal
+            triggerLabel="Portalled"
+            title="Rendered in the body"
+            description="Its submit button no longer belongs to the form."
+            footer={<button type="submit">Submit</button>}
+          >
+            Drop the <code>portal</code> prop and this button posts the form behind it.
+          </DialogDemo>
+        </form>
+      </div>
+    );
+  },
+};
+
+/**
  * The top layer stacks, so a dialog opened from a dialog sits above it and
  * Escape closes the nearer one first. Page scrolling stays locked until both
  * are gone.

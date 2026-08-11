@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef } from "react";
 import type { DialogHTMLAttributes, MouseEvent, ReactNode, RefObject } from "react";
+import { createPortal } from "react-dom";
 
 import { lockBodyScroll } from "./bodyScrollLock";
 import type { DialogRole, DialogSize } from "./dialog.tokens";
@@ -52,6 +53,21 @@ export type DialogProps = {
   initialFocus?: RefObject<HTMLElement | null>;
   /** Whether to freeze page scrolling while open. Defaults to true. */
   lockScroll?: boolean;
+  /**
+   * Renders the dialog elsewhere in the DOM — `true` for `document.body`, or
+   * an element to render into. Off by default.
+   *
+   * Not needed for stacking or clipping: `showModal()` puts the dialog in the
+   * top layer, which sits above the whole document whatever the `z-index` and
+   * `overflow` of its ancestors. Reach for this when the dialog's *position in
+   * the DOM* is the problem — nested inside a `<form>` whose submission its
+   * buttons would trigger, inside an element with a native click listener, or
+   * under an ancestor that may become `inert` or unmount beneath it.
+   *
+   * It does not change event propagation in React: a portal moves the DOM
+   * node, not the React tree, so a parent component's `onClick` still fires.
+   */
+  portal?: boolean | HTMLElement;
   className?: string;
 } & Omit<
   DialogHTMLAttributes<HTMLDialogElement>,
@@ -81,6 +97,7 @@ export function Dialog({
   closeLabel = "Close",
   initialFocus,
   lockScroll = true,
+  portal = false,
   className,
   ...props
 }: DialogProps) {
@@ -148,7 +165,7 @@ export function Dialog({
     if (startedOnBackdrop && event.target === event.currentTarget) onClose();
   };
 
-  return (
+  const content = (
     <dialog
       ref={dialogRef}
       role={role}
@@ -192,4 +209,15 @@ export function Dialog({
       {footer && <div className="sh-dialog__footer">{footer}</div>}
     </dialog>
   );
+
+  if (!portal) return content;
+
+  /*
+   * `document` is absent when server rendering, where a portal contributes no
+   * markup anyway — so returning nothing here matches what the client will
+   * produce and can't cause a hydration mismatch.
+   */
+  const target = portal === true ? (typeof document === "undefined" ? null : document.body) : portal;
+
+  return target ? createPortal(content, target) : null;
 }

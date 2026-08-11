@@ -348,6 +348,123 @@ describe("Dialog", () => {
     });
   });
 
+  describe("portal", () => {
+    it("renders in place by default", () => {
+      const { container } = render(
+        <div data-testid="host">
+          <Confirm />
+        </div>,
+      );
+
+      expect(container.querySelector(".sh-dialog")).toBeInTheDocument();
+    });
+
+    it("renders into the body when asked", () => {
+      const { container } = render(
+        <div data-testid="host">
+          <Confirm portal />
+        </div>,
+      );
+
+      expect(container.querySelector(".sh-dialog")).not.toBeInTheDocument();
+      expect(dialog()).toBeInTheDocument();
+      expect(dialog()?.parentElement).toBe(document.body);
+    });
+
+    it("renders into a given element", () => {
+      const host = document.createElement("div");
+      document.body.appendChild(host);
+
+      render(<Confirm portal={host} />);
+
+      expect(dialog()?.parentElement).toBe(host);
+      host.remove();
+    });
+
+    it("still opens modally through a portal", () => {
+      const showModal = vi.spyOn(HTMLDialogElement.prototype, "showModal");
+      render(<Confirm portal />);
+
+      expect(showModal).toHaveBeenCalled();
+      showModal.mockRestore();
+    });
+
+    it("escapes a surrounding form", async () => {
+      /*
+       * A submit button in the footer would otherwise post the form the dialog
+       * happens to sit inside. This is the reason to portal — the top layer
+       * already handles z-index and clipping.
+       */
+      const user = userEvent.setup();
+      const onSubmit = vi.fn((event: { preventDefault: () => void }) => event.preventDefault());
+
+      render(
+        <form onSubmit={onSubmit}>
+          <Confirm portal footer={<button type="submit">Save</button>} />
+        </form>,
+      );
+
+      await user.click(screen.getByRole("button", { name: "Save" }));
+
+      expect(onSubmit).not.toHaveBeenCalled();
+    });
+
+    describe("event escape", () => {
+      /** A host element carrying a plain DOM listener, as a third party would. */
+      const hostWithListener = () => {
+        const host = document.createElement("div");
+        const onNativeClick = vi.fn();
+        host.addEventListener("click", onNativeClick);
+        document.body.appendChild(host);
+
+        return { host, onNativeClick };
+      };
+
+      it("keeps clicks out of a native ancestor listener", async () => {
+        const user = userEvent.setup();
+        const { host, onNativeClick } = hostWithListener();
+
+        render(<Confirm portal />, { container: host });
+        await user.click(screen.getByRole("button", { name: "Close" }));
+
+        expect(onNativeClick).not.toHaveBeenCalled();
+        host.remove();
+      });
+
+      it("reaches that listener without a portal", async () => {
+        // The contrast the portal exists for, pinned so it stays deliberate.
+        const user = userEvent.setup();
+        const { host, onNativeClick } = hostWithListener();
+
+        render(<Confirm />, { container: host });
+        await user.click(screen.getByRole("button", { name: "Close" }));
+
+        expect(onNativeClick).toHaveBeenCalled();
+        host.remove();
+      });
+
+      it("still bubbles React events to the component ancestor", async () => {
+        /*
+         * A portal moves the DOM node, not the React tree — React events keep
+         * propagating to the parent component either way. Only native
+         * listeners and DOM-ancestry behaviour like form ownership escape.
+         */
+        const user = userEvent.setup();
+        const onReactClick = vi.fn();
+
+        render(
+          <form onClick={onReactClick} onSubmit={(event) => event.preventDefault()}>
+            <Confirm portal />
+          </form>,
+        );
+
+        await user.click(screen.getByRole("button", { name: "Close" }));
+
+        expect(onReactClick).toHaveBeenCalled();
+      });
+    });
+  });
+
   describe("page scrolling", () => {
     it("freezes the page while open", () => {
       render(<Confirm />);
