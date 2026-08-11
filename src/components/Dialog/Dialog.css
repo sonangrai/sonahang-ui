@@ -19,6 +19,13 @@
   padding: 0;
   width: calc(100% - 32px);
   max-height: 85dvh;
+  /*
+   * Everything about the layout lives here rather than in the [open] rule.
+   * Only `display` is transitioned, so any other property scoped to [open]
+   * would snap back the instant the dialog starts closing and reflow the
+   * contents for the length of the exit animation.
+   */
+  flex-direction: column;
   border: 1px solid var(--color-border);
   border-radius: 12px;
   background-color: var(--color-bg-canvas);
@@ -45,12 +52,12 @@
 }
 
 /*
- * Scoped to [open] on purpose: an unscoped `display` here would override the
- * UA's `display: none` and leave every dialog on screen permanently.
+ * `display` is scoped to [open] on purpose: unscoped, it would override the
+ * UA's `display: none` and leave every dialog on screen permanently. Keep this
+ * block to the three properties that are transitioned — see the note above.
  */
 .sh-dialog[open] {
   display: flex;
-  flex-direction: column;
   opacity: 1;
   transform: scale(1) translateY(0);
 }
