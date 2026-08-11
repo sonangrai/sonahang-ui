@@ -46,6 +46,9 @@ export type {
   DropdownAlign,
 } from './components/Dropdown';
 
+export { CodeBlock, dedentCode } from './components/CodeBlock';
+export type { CodeBlockProps } from './components/CodeBlock';
+
 export { Dialog, dialogSizes, dialogRoles } from './components/Dialog';
 export type { DialogProps, DialogSize, DialogRole } from './components/Dialog';
 
