@@ -1,0 +1,163 @@
+/*
+ * Don't inherit the consumer's box model — the published stylesheet ships no
+ * reset, and the tip is sized with padding.
+ */
+.sh-tooltip,
+.sh-tooltip__tip {
+  box-sizing: border-box;
+}
+
+/*
+ * Positioning context for the tip. inline-block keeps the wrapper the size of
+ * the trigger, so it doesn't disturb the line it sits on.
+ */
+.sh-tooltip {
+  position: relative;
+  display: inline-block;
+  font-family: var(--font-family-sans);
+}
+
+.sh-tooltip__tip {
+  position: absolute;
+  z-index: 20;
+  /* Shrink to the text, but never grow into a paragraph. */
+  width: max-content;
+  max-width: 240px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  /* Inverted surface: reads as an overlay, and flips with the theme for free. */
+  background-color: var(--color-text);
+  color: var(--color-text-inverse);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+  font-weight: var(--font-weight-regular);
+  text-align: left;
+  white-space: normal;
+  /* The tip must never sit between the pointer and the trigger. */
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  /*
+   * visibility is what keeps a hidden tip's content out of the tab order, and
+   * it's held back until the fade finishes so the text doesn't vanish first.
+   * A directly referenced hidden element still contributes to the accessible
+   * description, so aria-describedby keeps working throughout.
+   */
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease,
+    visibility 0s linear 0.15s;
+}
+
+.sh-tooltip__tip--open {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease,
+    visibility 0s;
+}
+
+/*
+ * Placement — 8px of separation, leaving room for the arrow.
+ *
+ * Each side needs its transform written twice because the reveal lift shares
+ * the property with the centring offset: closed sits 4px low, open sits where
+ * it belongs, and the pair is what the transition interpolates between. The
+ * open rules win on specificity, so order here doesn't matter.
+ */
+.sh-tooltip__tip--top {
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translate(-50%, 4px);
+}
+
+.sh-tooltip__tip--top.sh-tooltip__tip--open {
+  transform: translate(-50%, 0);
+}
+
+.sh-tooltip__tip--bottom {
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translate(-50%, 4px);
+}
+
+.sh-tooltip__tip--bottom.sh-tooltip__tip--open {
+  transform: translate(-50%, 0);
+}
+
+.sh-tooltip__tip--left {
+  right: calc(100% + 8px);
+  top: 50%;
+  transform: translate(0, calc(-50% + 4px));
+}
+
+.sh-tooltip__tip--left.sh-tooltip__tip--open {
+  transform: translate(0, -50%);
+}
+
+.sh-tooltip__tip--right {
+  left: calc(100% + 8px);
+  top: 50%;
+  transform: translate(0, calc(-50% + 4px));
+}
+
+.sh-tooltip__tip--right.sh-tooltip__tip--open {
+  transform: translate(0, -50%);
+}
+
+/* Arrow: a square of the tip's own colour, rotated and half-buried. */
+.sh-tooltip__tip::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background-color: inherit;
+  transform: rotate(45deg);
+}
+
+.sh-tooltip__tip--top::after {
+  top: 100%;
+  left: 50%;
+  margin: -4px 0 0 -4px;
+}
+
+.sh-tooltip__tip--bottom::after {
+  bottom: 100%;
+  left: 50%;
+  margin: 0 0 -4px -4px;
+}
+
+.sh-tooltip__tip--left::after {
+  left: 100%;
+  top: 50%;
+  margin: -4px 0 0 -4px;
+}
+
+.sh-tooltip__tip--right::after {
+  right: 100%;
+  top: 50%;
+  margin: -4px -4px 0 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /*
+   * The visibility delay has to go too: with an instant fade it would leave
+   * the tip unreachable for 0.15s after it appeared.
+   */
+  .sh-tooltip__tip,
+  .sh-tooltip__tip--open {
+    transition: none;
+  }
+
+  /* Drop the lift as well, so the tip appears in place rather than jumping. */
+  .sh-tooltip__tip--top,
+  .sh-tooltip__tip--bottom {
+    transform: translate(-50%, 0);
+  }
+
+  .sh-tooltip__tip--left,
+  .sh-tooltip__tip--right {
+    transform: translate(0, -50%);
+  }
+}
