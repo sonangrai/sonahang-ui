@@ -1,0 +1,147 @@
+/*
+ * Don't inherit the consumer's box model — the published stylesheet ships no
+ * reset, and the header and code area are both sized with padding.
+ */
+.sh-code-block,
+.sh-code-block__header,
+.sh-code-block__pre,
+.sh-code-block__copy {
+  box-sizing: border-box;
+}
+
+.sh-code-block {
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background-color: var(--color-bg-canvas);
+  font-family: var(--font-family-sans);
+  /* Clips the header's fill to the rounded corners. */
+  overflow: hidden;
+}
+
+.sh-code-block__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px 8px 14px;
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-bg-subtle);
+}
+
+.sh-code-block__filename {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-subtle);
+}
+
+.sh-code-block__copy {
+  /* Not space-between: the button belongs hard right with or without a name. */
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--color-text-subtle);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.sh-code-block__copy > svg {
+  width: 15px;
+  height: 15px;
+}
+
+.sh-code-block__copy:hover {
+  background-color: var(--color-bg-surface);
+  color: var(--color-text);
+}
+
+.sh-code-block__copy:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+.sh-code-block__pre {
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  /* Long files scroll rather than running down the page. */
+  max-height: 480px;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+  tab-size: 2;
+}
+
+.sh-code-block__pre:focus-visible {
+  outline: 2px solid var(--color-accent);
+  /* Inset, so the ring isn't clipped by the container's overflow. */
+  outline-offset: -2px;
+}
+
+.sh-code-block__code {
+  display: block;
+  /* Padding lives here rather than on <pre>, so it scrolls with the code
+     instead of leaving a gap that only shows at scroll position zero. */
+  padding: 14px;
+  font: inherit;
+  /* Shrink-wrapping to the widest line keeps the padding on the right edge. */
+  width: max-content;
+  min-width: 100%;
+}
+
+.sh-code-block--wrap .sh-code-block__code {
+  width: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/*
+ * Line numbers. A counter rather than a column of text: generated content is
+ * never picked up by a selection, so copying the code by hand doesn't drag the
+ * numbers along, and a wrapped line numbers its first row only.
+ */
+.sh-code-block--numbered .sh-code-block__code {
+  counter-reset: sh-code-line;
+  padding-left: 0;
+}
+
+.sh-code-block--numbered .sh-code-block__line {
+  counter-increment: sh-code-line;
+}
+
+.sh-code-block--numbered .sh-code-block__line::before {
+  content: counter(sh-code-line);
+  display: inline-block;
+  width: 2.5em;
+  margin-right: 1.25em;
+  text-align: right;
+  color: var(--color-text-subtle);
+  user-select: none;
+}
+
+/* Kept in the accessibility tree, out of the visual one. */
+.sh-code-block__status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
