@@ -2,8 +2,8 @@ import type { DialogHTMLAttributes, ReactNode, RefObject } from "react";
 
 import { portalInto } from "../../internal/portalInto";
 import { useModalSurface } from "../../internal/useModalSurface";
-import type { DialogRole, DialogSize } from "./dialog.tokens";
-import "./Dialog.css";
+import type { DrawerSide, DrawerSize } from "./drawer.tokens";
+import "./Drawer.css";
 
 const CloseIcon = () => (
   <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={1.75} aria-hidden="true">
@@ -11,17 +11,16 @@ const CloseIcon = () => (
   </svg>
 );
 
-export type DialogProps = {
+export type DrawerProps = {
   /**
-   * Whether the dialog is showing.
+   * Whether the drawer is showing.
    *
-   * Controlled only, deliberately: a modal has no trigger of its own, so it's
-   * always opened from somewhere else in the app. An uncontrolled dialog could
-   * never be opened.
+   * Controlled only, like `Dialog`: a modal surface has no trigger of its own,
+   * so an uncontrolled one could never be opened.
    */
   open: boolean;
   /**
-   * Called when the dialog asks to close — the close button, the backdrop, or
+   * Called when the drawer asks to close — the close button, the scrim, or
    * Escape. Nothing closes on its own; this has to set `open` to false.
    */
   onClose: () => void;
@@ -29,39 +28,39 @@ export type DialogProps = {
   title: ReactNode;
   /** Optional supporting line under the title. */
   description?: ReactNode;
-  /** Body content. Scrolls when it outgrows the dialog. */
+  /** Body content. Scrolls when it outgrows the drawer. */
   children?: ReactNode;
   /** Action row pinned below the body — usually buttons. */
   footer?: ReactNode;
-  /** Width of the dialog. Defaults to `md`. */
-  size?: DialogSize;
-  /** Defaults to `dialog`. Use `alertdialog` for a decision that can't wait. */
-  role?: DialogRole;
-  /** Whether Escape closes the dialog. Defaults to true. */
+  /** Edge to anchor to and slide in from. Defaults to `right`. */
+  side?: DrawerSide;
+  /** Extent along the drawer's own axis. Defaults to `md`. */
+  size?: DrawerSize;
+  /** Whether Escape closes the drawer. Defaults to true. */
   closeOnEscape?: boolean;
-  /** Whether clicking the backdrop closes the dialog. Defaults to true. */
+  /** Whether clicking the scrim closes the drawer. Defaults to true. */
   closeOnBackdropClick?: boolean;
   /** Whether to render the × in the header. Defaults to true. */
   showClose?: boolean;
   /** Accessible name for the × button. Defaults to "Close". */
   closeLabel?: string;
   /**
-   * Element to focus when the dialog opens. Without it the browser focuses the
+   * Element to focus when the drawer opens. Without it the browser focuses the
    * first focusable thing inside, or anything carrying `autoFocus`.
    */
   initialFocus?: RefObject<HTMLElement | null>;
   /** Whether to freeze page scrolling while open. Defaults to true. */
   lockScroll?: boolean;
   /**
-   * Renders the dialog elsewhere in the DOM — `true` for `document.body`, or
+   * Renders the drawer elsewhere in the DOM — `true` for `document.body`, or
    * an element to render into. Off by default.
    *
-   * Not needed for stacking or clipping: `showModal()` puts the dialog in the
-   * top layer, which sits above the whole document whatever the `z-index` and
-   * `overflow` of its ancestors. Reach for this when the dialog's *position in
-   * the DOM* is the problem — nested inside a `<form>` whose submission its
-   * buttons would trigger, inside an element with a native click listener, or
-   * under an ancestor that may become `inert` or unmount beneath it.
+   * Not needed for stacking or clipping: `showModal()` puts the drawer in the
+   * top layer, above the whole document whatever the `z-index` and `overflow`
+   * of its ancestors. Reach for this when the drawer's *position in the DOM*
+   * is the problem — nested inside a `<form>` whose submission its buttons
+   * would trigger, inside an element with a native click listener, or under an
+   * ancestor that may become `inert` or unmount beneath it.
    *
    * It does not change event propagation in React: a portal moves the DOM
    * node, not the React tree, so a parent component's `onClick` still fires.
@@ -74,22 +73,25 @@ export type DialogProps = {
 >;
 
 /**
- * Modal dialog built on the native `<dialog>` element.
+ * Panel that slides in from an edge of the viewport, over the page.
  *
- * `showModal()` puts it in the top layer, which is what makes it immune to
- * `z-index` and `overflow: hidden` on anything around it, and brings the focus
- * trap, the inert background and the backdrop with it. None of that is
- * reimplemented here.
+ * Shares every behaviour with `Dialog` — both are a modal native `<dialog>`,
+ * so both get the top layer, the focus trap, the inert background and the
+ * scrim from the browser rather than from code here. The difference is purely
+ * geometric: a drawer is pinned to one edge and fills its cross axis.
+ *
+ * There's deliberately no `alertdialog` option. A decision urgent enough for
+ * that role shouldn't arrive as a panel sliding in from the side.
  */
-export function Dialog({
+export function Drawer({
   open,
   onClose,
   title,
   description,
   children,
   footer,
+  side = "right",
   size = "md",
-  role = "dialog",
   closeOnEscape = true,
   closeOnBackdropClick = true,
   showClose = true,
@@ -99,7 +101,7 @@ export function Dialog({
   portal = false,
   className,
   ...props
-}: DialogProps) {
+}: DrawerProps) {
   const { titleId, descriptionId, surfaceProps } = useModalSurface({
     open,
     onClose,
@@ -111,20 +113,21 @@ export function Dialog({
 
   const content = (
     <dialog
-      role={role}
       aria-labelledby={titleId}
       aria-describedby={description ? descriptionId : undefined}
-      className={["sh-dialog", `sh-dialog--${size}`, className].filter(Boolean).join(" ")}
+      className={["sh-drawer", `sh-drawer--${side}`, `sh-drawer--${size}`, className]
+        .filter(Boolean)
+        .join(" ")}
       {...surfaceProps}
       {...props}
     >
-      <div className="sh-dialog__header">
-        <div className="sh-dialog__heading">
-          <h2 id={titleId} className="sh-dialog__title">
+      <div className="sh-drawer__header">
+        <div className="sh-drawer__heading">
+          <h2 id={titleId} className="sh-drawer__title">
             {title}
           </h2>
           {description && (
-            <p id={descriptionId} className="sh-dialog__description">
+            <p id={descriptionId} className="sh-drawer__description">
               {description}
             </p>
           )}
@@ -133,7 +136,7 @@ export function Dialog({
         {showClose && (
           <button
             type="button"
-            className="sh-dialog__close"
+            className="sh-drawer__close"
             aria-label={closeLabel}
             onClick={onClose}
           >
@@ -143,10 +146,10 @@ export function Dialog({
       </div>
 
       {children !== undefined && children !== null && children !== false && (
-        <div className="sh-dialog__body">{children}</div>
+        <div className="sh-drawer__body">{children}</div>
       )}
 
-      {footer && <div className="sh-dialog__footer">{footer}</div>}
+      {footer && <div className="sh-drawer__footer">{footer}</div>}
     </dialog>
   );
 

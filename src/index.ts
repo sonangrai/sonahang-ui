@@ -49,6 +49,9 @@ export type {
 export { Dialog, dialogSizes, dialogRoles } from './components/Dialog';
 export type { DialogProps, DialogSize, DialogRole } from './components/Dialog';
 
+export { Drawer, drawerSides, drawerSizes } from './components/Drawer';
+export type { DrawerProps, DrawerSide, DrawerSize } from './components/Drawer';
+
 export { Tooltip, resolveTooltipPlacement } from './components/Tooltip';
 export type {
   TooltipProps,
