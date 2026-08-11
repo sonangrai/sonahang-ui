@@ -1,0 +1,259 @@
+/*
+ * Don't inherit the consumer's box model — the published stylesheet ships no
+ * reset, and every section here is sized with padding.
+ */
+.sh-drawer,
+.sh-drawer__header,
+.sh-drawer__body,
+.sh-drawer__footer,
+.sh-drawer__close {
+  box-sizing: border-box;
+}
+
+.sh-drawer {
+  /*
+   * No padding: clicks on the scrim are dispatched to this element, and
+   * padding would make a ring of "inside the drawer" pixels that close it.
+   */
+  padding: 0;
+  border: none;
+  /* The UA caps a modal dialog well short of the viewport; a drawer fills it. */
+  max-width: none;
+  max-height: none;
+  background-color: var(--color-bg-canvas);
+  color: var(--color-text);
+  font-family: var(--font-family-sans);
+  /*
+   * Layout lives on the base rule, never in [open]. Only the transitioned
+   * properties may be state-scoped — anything else snaps back the moment the
+   * drawer starts closing and reflows it for the length of the slide.
+   */
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow:
+    0 10px 15px -3px rgb(0 0 0 / 0.12),
+    0 4px 6px -4px rgb(0 0 0 / 0.12);
+
+  /*
+   * `display` and `overlay` need allow-discrete or the element leaves the top
+   * layer the instant it closes and the slide-out never runs. Browsers without
+   * it simply open and close immediately.
+   */
+  transition:
+    transform 0.22s cubic-bezier(0.32, 0.72, 0, 1),
+    display 0.22s allow-discrete,
+    overlay 0.22s allow-discrete;
+}
+
+/*
+ * `display` is scoped to [open] on purpose: unscoped, it would override the
+ * UA's `display: none` and leave every drawer on screen permanently. Keep this
+ * block to the transitioned properties only — see the note above.
+ */
+.sh-drawer[open] {
+  display: flex;
+  transform: none;
+}
+
+/*
+ * Edges. `margin` does the anchoring, because the UA centres a modal dialog
+ * with `margin: auto` inside `inset: 0`. The offset transform is the resting
+ * off-screen position, which [open] cancels and the transition animates.
+ */
+.sh-drawer--left {
+  margin: 0 auto 0 0;
+  transform: translateX(-100%);
+  border-radius: 0 12px 12px 0;
+}
+
+.sh-drawer--right {
+  margin: 0 0 0 auto;
+  transform: translateX(100%);
+  border-radius: 12px 0 0 12px;
+}
+
+.sh-drawer--top {
+  margin: 0 0 auto 0;
+  transform: translateY(-100%);
+  border-radius: 0 0 12px 12px;
+}
+
+.sh-drawer--bottom {
+  margin: auto 0 0 0;
+  transform: translateY(100%);
+  border-radius: 12px 12px 0 0;
+}
+
+@starting-style {
+  .sh-drawer--left[open] {
+    transform: translateX(-100%);
+  }
+
+  .sh-drawer--right[open] {
+    transform: translateX(100%);
+  }
+
+  .sh-drawer--top[open] {
+    transform: translateY(-100%);
+  }
+
+  .sh-drawer--bottom[open] {
+    transform: translateY(100%);
+  }
+}
+
+/*
+ * Sizes apply to the drawer's own axis only; the cross axis always fills. The
+ * size is a custom property so each side picks the axis it belongs on rather
+ * than needing a rule per side-and-size pair.
+ */
+.sh-drawer--sm {
+  --sh-drawer-size: 320px;
+}
+
+.sh-drawer--md {
+  --sh-drawer-size: 420px;
+}
+
+.sh-drawer--lg {
+  --sh-drawer-size: 560px;
+}
+
+.sh-drawer--full {
+  --sh-drawer-size: 100%;
+}
+
+.sh-drawer--left,
+.sh-drawer--right {
+  /* min() rather than max-width, which the UA already sets and we cleared. */
+  width: min(var(--sh-drawer-size), 100%);
+  height: 100%;
+}
+
+.sh-drawer--top,
+.sh-drawer--bottom {
+  width: 100%;
+  height: min(var(--sh-drawer-size), 100%);
+}
+
+.sh-drawer::backdrop {
+  background-color: var(--color-scrim);
+  opacity: 0;
+  transition:
+    opacity 0.22s ease,
+    display 0.22s allow-discrete,
+    overlay 0.22s allow-discrete;
+}
+
+.sh-drawer[open]::backdrop {
+  opacity: 1;
+}
+
+@starting-style {
+  .sh-drawer[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+.sh-drawer__header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex-shrink: 0;
+  padding: 20px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.sh-drawer__heading {
+  flex: 1;
+  min-width: 0;
+}
+
+.sh-drawer__title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  color: var(--color-text);
+}
+
+.sh-drawer__description {
+  margin: 6px 0 0;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-subtle);
+}
+
+.sh-drawer__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--color-text-subtle);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.sh-drawer__close > svg {
+  width: 16px;
+  height: 16px;
+}
+
+.sh-drawer__close:hover {
+  background-color: var(--color-bg-subtle);
+  color: var(--color-text);
+}
+
+.sh-drawer__close:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+.sh-drawer__body {
+  /* min-height lets the flex item shrink below its content so it can scroll. */
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 20px;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-text);
+}
+
+.sh-drawer__footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+  padding: 16px 20px;
+  border-top: 1px solid var(--color-border);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /*
+   * Keep the discrete parts so the element still leaves the top layer, but
+   * drop the slide. The per-side offsets have to be cleared by name: they sit
+   * on the side classes, not on [open], so `transform: none` on the base rule
+   * alone would lose the specificity tie.
+   */
+  .sh-drawer,
+  .sh-drawer::backdrop {
+    transition: none;
+  }
+
+  .sh-drawer--left,
+  .sh-drawer--right,
+  .sh-drawer--top,
+  .sh-drawer--bottom {
+    transform: none;
+  }
+}
