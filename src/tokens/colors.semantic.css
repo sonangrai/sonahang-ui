@@ -32,6 +32,10 @@
   --color-danger: var(--color-danger-700);
   --color-danger-border: var(--color-danger-500);
 
+  /* Dims the page behind a modal surface. Darker in dark mode, where the
+     page itself is already dark and a light scrim would separate nothing. */
+  --color-scrim: rgb(0 0 0 / 0.45);
+
   /*
    * Accent tints — a four-step ladder of the accent hue for tinted surfaces
    * that need to differ by emphasis rather than by colour, keeping the mono
@@ -93,6 +97,8 @@
 
   --color-danger: var(--color-danger-300);
   --color-danger-border: var(--color-danger-400);
+
+  --color-scrim: rgb(0 0 0 / 0.65);
 
   --color-accent-tint-1: var(--color-accent-950);
   --color-accent-tint-2: var(--color-accent-900);

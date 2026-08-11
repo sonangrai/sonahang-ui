@@ -46,6 +46,9 @@ export type {
   DropdownAlign,
 } from './components/Dropdown';
 
+export { Dialog, dialogSizes, dialogRoles } from './components/Dialog';
+export type { DialogProps, DialogSize, DialogRole } from './components/Dialog';
+
 export { Tooltip, resolveTooltipPlacement } from './components/Tooltip';
 export type {
   TooltipProps,
