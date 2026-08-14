@@ -57,10 +57,18 @@
   cursor: not-allowed;
 }
 
+/*
+ * Nothing here may take a pointer event, or the field can't be focused by
+ * clicking it. Each slot is `position: relative` for its caret, which makes it
+ * a positioned element painting in tree order — after the input, therefore on
+ * top of it. Hit-testing follows paint order, so without this a click lands on
+ * a box that isn't focusable and only the gaps between them reach the input.
+ */
 .sh-input-otp__boxes {
   display: flex;
   align-items: center;
   gap: 8px;
+  pointer-events: none;
 }
 
 .sh-input-otp__slot {
