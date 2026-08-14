@@ -41,6 +41,13 @@ export type { AvatarProps, AvatarGroupProps, AvatarSize } from './components/Ava
 export { Input } from './components/Input';
 export type { InputProps } from './components/Input';
 
+export { InputOtp, sanitizeOtpValue, otpTypes } from './components/InputOtp';
+export type {
+  InputOtpProps,
+  OtpType,
+  SanitizeOtpValueOptions,
+} from './components/InputOtp';
+
 export {
   Dropdown,
   DropdownTrigger,

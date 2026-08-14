@@ -1,0 +1,173 @@
+/*
+ * Don't inherit the consumer's box model — the published stylesheet ships no
+ * reset, and the boxes are sized with a border.
+ */
+.sh-input-otp,
+.sh-input-otp__control,
+.sh-input-otp__slot {
+  box-sizing: border-box;
+}
+
+.sh-input-otp {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: var(--font-family-sans);
+}
+
+.sh-input-otp__label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+}
+
+.sh-input-otp__required {
+  margin-left: 2px;
+  color: var(--color-danger);
+}
+
+/* Positioning context for the input laid over the boxes. */
+.sh-input-otp__field {
+  position: relative;
+  display: inline-flex;
+}
+
+/*
+ * The real field: invisible, but covering every box so it takes the click and
+ * the keystrokes. Not `display: none` or `visibility: hidden`, which would
+ * make it unfocusable and take it out of the accessibility tree.
+ */
+.sh-input-otp__control {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  opacity: 0;
+  /* 16px keeps iOS from zooming the page when the field takes focus. */
+  font-size: 16px;
+  cursor: default;
+}
+
+.sh-input-otp__control:disabled {
+  cursor: not-allowed;
+}
+
+/*
+ * Nothing here may take a pointer event, or the field can't be focused by
+ * clicking it. Each slot is `position: relative` for its caret, which makes it
+ * a positioned element painting in tree order — after the input, therefore on
+ * top of it. Hit-testing follows paint order, so without this a click lands on
+ * a box that isn't focusable and only the gaps between them reach the input.
+ */
+.sh-input-otp__boxes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.sh-input-otp__slot {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 52px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 8px;
+  background-color: var(--color-bg-canvas);
+  color: var(--color-text);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-lg);
+  /* Digits share a width, so the code doesn't shuffle as it's typed. */
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+/*
+ * The input carries no visible focus ring of its own, so the active box is the
+ * focus indicator. It shows for pointer focus too — a text field always
+ * signals where typing will land.
+ */
+.sh-input-otp__slot--active {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 1px var(--color-accent);
+}
+
+/* A stand-in caret, only where there's no character to sit under it. */
+.sh-input-otp__slot--active:not(.sh-input-otp__slot--filled)::after {
+  content: "";
+  position: absolute;
+  width: 1px;
+  height: 20px;
+  background-color: var(--color-accent);
+  animation: sh-input-otp-caret 1s step-end infinite;
+}
+
+@keyframes sh-input-otp-caret {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+
+.sh-input-otp__separator {
+  width: 10px;
+  height: 1px;
+  flex-shrink: 0;
+  background-color: var(--color-border-strong);
+}
+
+.sh-input-otp__message {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-subtle);
+}
+
+.sh-input-otp--invalid .sh-input-otp__slot {
+  border-color: var(--color-danger-border);
+}
+
+.sh-input-otp--invalid .sh-input-otp__slot--active {
+  box-shadow: 0 0 0 1px var(--color-danger-border);
+}
+
+.sh-input-otp--invalid .sh-input-otp__slot--active:not(.sh-input-otp__slot--filled)::after {
+  background-color: var(--color-danger-border);
+}
+
+.sh-input-otp--invalid .sh-input-otp__message {
+  color: var(--color-danger);
+}
+
+.sh-input-otp--disabled .sh-input-otp__label,
+.sh-input-otp--disabled .sh-input-otp__slot {
+  color: var(--color-text-subtle);
+}
+
+.sh-input-otp--disabled .sh-input-otp__slot {
+  background-color: var(--color-bg-subtle);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Hold the caret steady rather than blinking it. */
+  .sh-input-otp__slot--active:not(.sh-input-otp__slot--filled)::after {
+    animation: none;
+  }
+
+  .sh-input-otp__slot {
+    transition: none;
+  }
+}
