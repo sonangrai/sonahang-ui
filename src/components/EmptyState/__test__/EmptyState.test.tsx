@@ -71,9 +71,10 @@ describe("EmptyState", () => {
       expect(container.querySelector(".sh-empty-state__icon")).not.toBeInTheDocument();
     });
 
-    it("treats null as no icon rather than an empty well", () => {
+    it("treats null as no icon rather than empty space", () => {
       // `icon={condition ? <Icon /> : null}` is the natural way to write this,
-      // and the well is a filled circle — around nothing it's a bare disc.
+      // and the wrapper carries the gap below the mark — around nothing it
+      // leaves a stray band of space above the title.
       const { container } = render(<EmptyState title="No projects" icon={null} />);
 
       expect(container.querySelector(".sh-empty-state__icon")).not.toBeInTheDocument();

@@ -31,19 +31,6 @@ const meta = {
     title: "No projects yet",
     description: "Projects keep your work organised. Create one to get started.",
   },
-  decorators: [
-    (Story) => (
-      <div
-        style={{
-          border: "1px solid var(--color-border)",
-          borderRadius: 12,
-          backgroundColor: "var(--color-bg-canvas)",
-        }}
-      >
-        <Story />
-      </div>
-    ),
-  ],
 } satisfies Meta<typeof EmptyState>;
 
 export default meta;
@@ -134,19 +121,10 @@ export const WithExtraContent: Story = {
 export const InAPage: Story = {
   name: "In a page",
   parameters: { controls: { disable: true } },
-  decorators: [],
   render: (args) => (
     <div style={{ fontFamily: "var(--font-family-sans)", color: "var(--color-text)" }}>
       <h2 style={{ marginTop: 0 }}>Workspace</h2>
-      <div
-        style={{
-          border: "1px solid var(--color-border)",
-          borderRadius: 12,
-          backgroundColor: "var(--color-bg-canvas)",
-        }}
-      >
-        <EmptyState {...args} headingLevel={3} action={{ label: "New project", onClick: () => {} }} />
-      </div>
+      <EmptyState {...args} headingLevel={3} action={{ label: "New project", onClick: () => {} }} />
     </div>
   ),
 };

@@ -76,8 +76,8 @@ export function EmptyState({
 }: EmptyStateProps) {
   /*
    * `undefined` means "no opinion", so the default mark stands in. Both
-   * `false` and `null` mean "no icon" — the well is a filled circle, and
-   * rendering it around nothing leaves a bare disc on the page.
+   * `false` and `null` mean "no icon" — the wrapper carries the gap below the
+   * mark, so rendering it around nothing leaves a stray band of space.
    */
   const resolvedIcon = icon === undefined ? <EmptyIcon /> : icon;
   const hasIcon = resolvedIcon !== false && resolvedIcon !== null;

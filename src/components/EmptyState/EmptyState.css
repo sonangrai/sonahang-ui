@@ -13,6 +13,9 @@
   align-items: center;
   text-align: center;
   padding: 48px 24px;
+  /* Dashed, so the space reads as waiting to be filled rather than as a panel. */
+  border: 1px dashed var(--color-border-strong);
+  border-radius: 12px;
   font-family: var(--font-family-sans);
 }
 
@@ -20,33 +23,24 @@
   padding: 28px 16px;
 }
 
-/* A quiet well behind the mark, so it reads as deliberate rather than missing. */
 .sh-empty-state__icon {
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 56px;
-  height: 56px;
   margin-bottom: 16px;
-  border-radius: 50%;
-  background-color: var(--color-bg-subtle);
   color: var(--color-text-subtle);
 }
 
 .sh-empty-state__icon > svg {
-  width: 26px;
-  height: 26px;
+  width: 40px;
+  height: 40px;
 }
 
 .sh-empty-state--sm .sh-empty-state__icon {
-  width: 44px;
-  height: 44px;
   margin-bottom: 12px;
 }
 
 .sh-empty-state--sm .sh-empty-state__icon > svg {
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
 }
 
 .sh-empty-state__title {
