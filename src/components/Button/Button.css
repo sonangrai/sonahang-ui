@@ -8,6 +8,9 @@
   font-weight: var(--font-weight-medium);
   line-height: var(--line-height-normal);
   cursor: pointer;
+  /* These classes are also worn by <a> elements that navigate — see
+     buttonClassNames — and a link would otherwise arrive underlined. */
+  text-decoration: none;
   transition:
     background-color 0.15s ease,
     border-color 0.15s ease,

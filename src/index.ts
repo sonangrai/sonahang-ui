@@ -14,8 +14,20 @@ import './tokens/typography.css';
 export { Text, textVariants, textColors, textWeights } from './components/Text';
 export type { TextProps, TextVariant, TextColor, TextWeight } from './components/Text';
 
-export { Button, buttonVariants, buttonSizes } from './components/Button';
-export type { ButtonProps, ButtonVariant, ButtonSize } from './components/Button';
+export { Button, buttonVariants, buttonSizes, buttonClassNames } from './components/Button';
+export type {
+  ButtonProps,
+  ButtonVariant,
+  ButtonSize,
+  ButtonClassNameOptions,
+} from './components/Button';
+
+export { EmptyState } from './components/EmptyState';
+export type {
+  EmptyStateProps,
+  EmptyStateAction,
+  EmptyStateHeadingLevel,
+} from './components/EmptyState';
 
 export { Tag, tagVariants } from './components/Tag';
 export type { TagProps, TagVariant } from './components/Tag';
