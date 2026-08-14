@@ -1,0 +1,85 @@
+/*
+ * Don't inherit the consumer's box model — the published stylesheet ships no
+ * reset, and the icon well is sized with padding.
+ */
+.sh-empty-state,
+.sh-empty-state__icon {
+  box-sizing: border-box;
+}
+
+.sh-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 48px 24px;
+  /* Dashed, so the space reads as waiting to be filled rather than as a panel. */
+  border: 1px dashed var(--color-border-strong);
+  border-radius: 12px;
+  font-family: var(--font-family-sans);
+}
+
+.sh-empty-state--sm {
+  padding: 28px 16px;
+}
+
+.sh-empty-state__icon {
+  display: inline-flex;
+  margin-bottom: 16px;
+  color: var(--color-text-subtle);
+}
+
+.sh-empty-state__icon > svg {
+  width: 40px;
+  height: 40px;
+}
+
+.sh-empty-state--sm .sh-empty-state__icon {
+  margin-bottom: 12px;
+}
+
+.sh-empty-state--sm .sh-empty-state__icon > svg {
+  width: 30px;
+  height: 30px;
+}
+
+.sh-empty-state__title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  color: var(--color-text);
+}
+
+.sh-empty-state--sm .sh-empty-state__title {
+  font-size: var(--font-size-md);
+}
+
+.sh-empty-state__description {
+  /* Capped so the line length stays readable however wide the container is. */
+  max-width: 46ch;
+  margin: 8px 0 0;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-text-subtle);
+}
+
+.sh-empty-state__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.sh-empty-state--sm .sh-empty-state__actions {
+  margin-top: 16px;
+}
+
+.sh-empty-state__extra {
+  margin-top: 16px;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-subtle);
+}

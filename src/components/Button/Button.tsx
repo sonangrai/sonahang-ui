@@ -1,5 +1,6 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
+import { buttonClassNames } from "./buttonClassNames";
 import type { ButtonSize, ButtonVariant } from "./button.tokens";
 import "./Button.css";
 
@@ -33,16 +34,7 @@ export function Button({
   ...props
 }: ButtonProps) {
   const isIconOnly = variant === "icon";
-  const classes = [
-    "sh-button",
-    `sh-button--${variant}`,
-    `sh-button--${size}`,
-    fullWidth && "sh-button--full-width",
-    loading && "sh-button--loading",
-    className,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  const classes = buttonClassNames({ variant, size, fullWidth, loading, className });
 
   return (
     <button
