@@ -149,4 +149,18 @@ export type {
   SegmentedControlOption,
 } from './components/SegmentedControl';
 
+/**
+ * Design tokens. The stylesheet already defines every color as a CSS var
+ * (`--color-accent-600`, `--color-bg-surface`, …) — these are the same
+ * values in JS, for charts, canvases and anywhere a var won't reach.
+ */
+export { palette, semanticColors, accentFill, colorVar, paletteVar } from './tokens/colors';
+export type {
+  PaletteName,
+  AccentStep,
+  NeutralStep,
+  DangerStep,
+  ColorTheme,
+  SemanticColorName,
+} from './tokens/colors';
 export * as colorTokens from './tokens/colors';

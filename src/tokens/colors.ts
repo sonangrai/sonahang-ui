@@ -2,7 +2,12 @@
  * TS mirror of colors.css / colors.semantic.css, for places that need
  * the raw values in JS (Storybook docs, color pickers, tests) rather
  * than a CSS var. Keep in sync with the .css files by hand — there's
- * no build step generating one from the other.
+ * no build step generating one from the other; `__test__/colors.test.ts`
+ * parses the stylesheets and fails if the two drift apart.
+ *
+ * In app code prefer the CSS vars (or `colorVar()`), so colors follow
+ * the active theme. The hex values here are per-theme snapshots and
+ * don't flip on their own.
  */
 
 export const accent = {
@@ -34,8 +39,39 @@ export const neutral = {
   950: '#0d0b12',
 } as const;
 
+export const danger = {
+  50: '#fef3f2',
+  100: '#fee4e2',
+  200: '#fecdca',
+  300: '#fda29b',
+  400: '#f97066',
+  500: '#f04438',
+  600: '#d92d20',
+  700: '#b42318',
+  800: '#912018',
+  900: '#7a271a',
+  950: '#55160c',
+} as const;
+
 export type AccentStep = keyof typeof accent;
 export type NeutralStep = keyof typeof neutral;
+export type DangerStep = keyof typeof danger;
+
+/** Every primitive scale, keyed by name — for iterating over the whole palette. */
+export const palette = { accent, neutral, danger } as const;
+
+export type PaletteName = keyof typeof palette;
+
+/** Fixed across themes — see colors.semantic.css for why. */
+export const accentFill = {
+  bg: accent[700],
+  text: accent[100],
+} as const;
+
+const themeless = {
+  'accent-fill-bg': accentFill.bg,
+  'accent-fill-text': accentFill.text,
+} as const;
 
 export const semanticColors = {
   light: {
@@ -51,6 +87,15 @@ export const semanticColors = {
     'accent-hover': accent[700],
     'accent-subtle-bg': accent[50],
     'accent-subtle-text': accent[700],
+    ...themeless,
+    danger: danger[700],
+    'danger-border': danger[500],
+    scrim: 'rgb(0 0 0 / 0.45)',
+    'accent-tint-1': accent[50],
+    'accent-tint-2': accent[100],
+    'accent-tint-3': accent[200],
+    'accent-tint-4': accent[300],
+    'accent-on-tint': accent[900],
   },
   dark: {
     'bg-canvas': neutral[950],
@@ -65,11 +110,38 @@ export const semanticColors = {
     'accent-hover': accent[300],
     'accent-subtle-bg': accent[900],
     'accent-subtle-text': accent[200],
+    ...themeless,
+    danger: danger[300],
+    'danger-border': danger[400],
+    scrim: 'rgb(0 0 0 / 0.65)',
+    'accent-tint-1': accent[950],
+    'accent-tint-2': accent[900],
+    'accent-tint-3': accent[800],
+    'accent-tint-4': accent[700],
+    'accent-on-tint': accent[100],
   },
 } as const;
 
-/** Fixed across themes — see colors.semantic.css for why. */
-export const accentFill = {
-  bg: accent[700],
-  text: accent[100],
-} as const;
+export type ColorTheme = keyof typeof semanticColors;
+export type SemanticColorName = keyof typeof semanticColors.light;
+
+/**
+ * The CSS var for a semantic token, ready to drop into an inline style or a
+ * styled-component. Unlike the hex values above it stays theme-aware:
+ *
+ *   <div style={{ background: colorVar('bg-surface') }} />
+ */
+export function colorVar(name: SemanticColorName): `var(--color-${SemanticColorName})` {
+  return `var(--color-${name})`;
+}
+
+/**
+ * The CSS var for a primitive step, e.g. `paletteVar('accent', 600)`. Reach for
+ * `colorVar()` first — primitives carry no meaning and don't respond to theme.
+ */
+export function paletteVar<S extends PaletteName>(
+  scale: S,
+  step: keyof (typeof palette)[S],
+): string {
+  return `var(--color-${scale}-${String(step)})`;
+}
