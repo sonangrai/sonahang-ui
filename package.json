@@ -1,10 +1,29 @@
 {
   "name": "sonahang-ui",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "description": "React component library and design system, documented in Storybook.",
+  "keywords": [
+    "react",
+    "component-library",
+    "design-system",
+    "ui-components",
+    "storybook",
+    "accessible",
+    "typescript",
+    "design-tokens"
+  ],
+  "homepage": "https://github.com/sonangrai/sonahang-ui#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sonangrai/sonahang-ui.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sonangrai/sonahang-ui/issues"
+  },
   "files": [
-    "dist"
+    "dist",
+    "style.css.d.ts"
   ],
   "main": "./dist/sonahang-ui.cjs",
   "module": "./dist/sonahang-ui.js",
@@ -13,15 +32,24 @@
     "*.css",
     "**/*.css"
   ],
+  "author": {
+    "name": "Sonahang Rai",
+    "url": "https://www.sonahangrai.com.np",
+    "email": "shonahangrae@gmail.com"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/sonahang-ui.js",
       "require": "./dist/sonahang-ui.cjs"
     },
-    "./style.css": "./dist/sonahang-ui.css",
+    "./style.css": {
+      "types": "./style.css.d.ts",
+      "default": "./dist/sonahang-ui.css"
+    },
     "./package.json": "./package.json"
   },
+  "license": "MIT",
   "scripts": {
     "dev": "vite",
     "dev:all": "concurrently --kill-others-on-fail -n vite,storybook -c cyan,magenta \"pnpm dev\" \"pnpm storybook --no-open\"",

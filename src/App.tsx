@@ -1,32 +1,29 @@
-import "./App.css";
-import { Logo } from "./components/Logo";
-import { Text } from "./components/Text";
+import "./landing/landing.css";
 
+import { GetStarted } from "./landing/GetStarted";
+import { Hero } from "./landing/Hero";
+import { Showcase } from "./landing/Showcase";
+import { SiteFooter } from "./landing/SiteFooter";
+import { SiteHeader } from "./landing/SiteHeader";
+import { Tokens } from "./landing/Tokens";
+
+/**
+ * The home route — a landing page built out of the library's own components,
+ * which doubles as the smoke test for them. Nothing here is published: the
+ * npm build entry is `src/index.ts`.
+ */
 function App() {
   return (
-    <main className="landing">
-      <span className="landing__badge">
-        <span className="landing__badge-dot" aria-hidden="true" />
-        <Text variant="caption" color="subtle">
-          On construction
-        </Text>
-      </span>
-
-      <Logo />
-
-      <Text variant="body-lg" color="subtle" className="landing__subtitle">
-        A React component library and design system — built for consistency,
-        documented in Storybook. Still under construction.
-      </Text>
-
-      <a href="/storybook" className="landing__cta">
-        Preview under-construction components in Storybook
-      </a>
-
-      <Text variant="caption" color="subtle" className="landing__footer">
-        © {new Date().getFullYear()} sonahang-ui
-      </Text>
-    </main>
+    <>
+      <SiteHeader />
+      <main className="page">
+        <Hero />
+        <GetStarted />
+        <Showcase />
+        <Tokens />
+      </main>
+      <SiteFooter />
+    </>
   );
 }
 
