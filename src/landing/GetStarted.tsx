@@ -1,4 +1,3 @@
-import { Alert } from "../components/Alert";
 import { CodeBlock } from "../components/CodeBlock";
 import { Tab, TabList, TabPanel, Tabs } from "../components/Tabs";
 import { Text } from "../components/Text";
