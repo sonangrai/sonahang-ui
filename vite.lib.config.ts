@@ -27,6 +27,11 @@ export default defineConfig({
     rollupOptions: {
       external: ['react', 'react-dom', 'react/jsx-runtime'],
       output: {
+        // The whole library is client-side (hooks, context, DOM refs), so mark
+        // the bundle with the React Server Components directive. Without it,
+        // Next.js App Router evaluates these modules on the server and throws
+        // "createContext only works in Client Components".
+        banner: '"use client";',
         globals: {
           react: 'React',
           'react-dom': 'ReactDOM',
