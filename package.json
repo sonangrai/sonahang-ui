@@ -1,6 +1,6 @@
 {
   "name": "sonahang-ui",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "type": "module",
   "description": "React component library and design system, documented in Storybook.",
   "keywords": [

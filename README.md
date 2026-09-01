@@ -52,6 +52,28 @@ tree-shakeable, so unused components are dropped by your bundler.
 > The stylesheet loads Inter from Google Fonts via `@import`. If you'd rather
 > self-host the font or use your own, override `--font-family-sans`.
 
+### Overriding styles with `className`
+
+Every component forwards `className` to its root element, and the stylesheet is
+wrapped in a single `@layer sonahang-ui` cascade layer. Unlayered CSS always
+beats layered CSS regardless of specificity, so unlayered styles of your own —
+a plain class, a CSS module — override a component without `!important` or
+specificity hacks:
+
+```tsx
+<Button className="checkout-cta">Save</Button>
+```
+
+The one case that needs care is CSS you write inside a layer of your own,
+since layers are ranked by the order they are first declared, not by
+specificity. Tailwind v4 is the common example — it puts every utility in
+`@layer utilities`. Declare the order explicitly, once, at the top of your
+global stylesheet, and it no longer depends on which file imports first:
+
+```css
+@layer sonahang-ui, theme, base, components, utilities;
+```
+
 ## Components
 
 Layout and content: `Text`, `Logo`, `CodeBlock`, `EmptyState`, `Skeleton`
