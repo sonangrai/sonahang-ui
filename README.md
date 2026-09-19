@@ -86,7 +86,7 @@ Feedback: `Alert`, `Spinner`, `ProgressBar`, `Tooltip`, `Dialog`, `Drawer`
 
 Navigation: `Tabs`, `Breadcrumb`, `Pagination`, `Stepper`, `Accordion`
 
-Data display: `Avatar`, `Tag`, `Chip`
+Data display: `Avatar`, `Tag`, `Chip`, `Carousel`
 
 Every component, every prop, and every state is documented with live controls
 in [Storybook](https://github.com/sonangrai/sonahang-ui) — that's the real
