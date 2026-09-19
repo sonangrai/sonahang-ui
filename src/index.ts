@@ -126,6 +126,25 @@ export type {
   TabsActivation,
 } from './components/Tabs';
 
+export {
+  Carousel,
+  CarouselSlides,
+  CarouselSlide,
+  CarouselPrevious,
+  CarouselNext,
+  CarouselDots,
+  CarouselPlayPause,
+} from './components/Carousel';
+export type {
+  CarouselProps,
+  CarouselSlidesProps,
+  CarouselSlideProps,
+  CarouselPreviousProps,
+  CarouselNextProps,
+  CarouselDotsProps,
+  CarouselPlayPauseProps,
+} from './components/Carousel';
+
 export { Skeleton, skeletonVariants, skeletonAnimations } from './components/Skeleton';
 export type { SkeletonProps, SkeletonVariant, SkeletonAnimation } from './components/Skeleton';
 

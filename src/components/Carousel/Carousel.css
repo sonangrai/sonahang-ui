@@ -1,0 +1,204 @@
+/*
+ * Don't inherit the consumer's box model — the published stylesheet ships no
+ * reset, and the controls are sized with a fixed box plus a border.
+ */
+.sh-carousel,
+.sh-carousel__viewport,
+.sh-carousel__track,
+.sh-carousel__slide,
+.sh-carousel__control,
+.sh-carousel__dots,
+.sh-carousel__dot,
+.sh-carousel__play-pause {
+  box-sizing: border-box;
+}
+
+/*
+ * Grid rather than position: relative + absolute arrows. The arrows overlay
+ * the slides by sharing their grid cell, so they stay centred on the slides
+ * however much sits below — dots, a play button, both, neither. Anything
+ * absolute would be centred on the whole carousel and drift down the moment
+ * a second row appeared.
+ *
+ * It does mean the parts want to be direct children, with the slides first.
+ */
+.sh-carousel {
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-items: center;
+  gap: 12px;
+  font-family: var(--font-family-sans);
+}
+
+.sh-carousel__viewport {
+  grid-area: 1 / 1;
+  width: 100%;
+  /* The track is full width per slide; this is what makes it a window. */
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.sh-carousel__viewport:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.sh-carousel__track {
+  display: flex;
+  /*
+   * Percentages of the track's own width, so the travel stays right at any
+   * size without measuring anything. The index arrives as a bare number.
+   */
+  transform: translateX(calc(var(--sh-carousel-index, 0) * -100%));
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sh-carousel__slide {
+  /* No shrinking: every slide is exactly one viewport wide. */
+  flex: 0 0 100%;
+  min-width: 0;
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+}
+
+.sh-carousel__control {
+  grid-area: 1 / 1;
+  align-self: center;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background-color: var(--color-bg-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.sh-carousel__control--previous {
+  justify-self: start;
+  margin-left: 12px;
+}
+
+.sh-carousel__control--next {
+  justify-self: end;
+  margin-right: 12px;
+}
+
+.sh-carousel__control svg {
+  width: 18px;
+  height: 18px;
+}
+
+.sh-carousel__control:not(:disabled):hover {
+  background-color: var(--color-bg-subtle);
+}
+
+.sh-carousel__control:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.sh-carousel__control:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.sh-carousel__dots {
+  grid-column: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sh-carousel__dot {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background-color: var(--color-border-strong);
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    width 0.2s ease;
+}
+
+/*
+ * A 8px dot is well under any sane touch target, and growing the dot itself
+ * would space the row out. The pseudo-element enlarges only what you can hit.
+ */
+.sh-carousel__dot::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+}
+
+.sh-carousel__dot:not(.sh-carousel__dot--current):hover {
+  background-color: var(--color-text-subtle);
+}
+
+.sh-carousel__dot--current {
+  /* Widened rather than recoloured alone, so it reads without relying on hue. */
+  width: 20px;
+  background-color: var(--color-accent);
+}
+
+.sh-carousel__dot:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+.sh-carousel__play-pause {
+  grid-column: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background-color: transparent;
+  color: var(--color-text-subtle);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.sh-carousel__play-pause svg {
+  width: 14px;
+  height: 14px;
+}
+
+.sh-carousel__play-pause:hover {
+  background-color: var(--color-bg-subtle);
+  color: var(--color-text);
+}
+
+.sh-carousel__play-pause:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/*
+ * The slide still changes, it just arrives instead of travelling. Rotation is
+ * suppressed outright under this preference — see useAutoRotate.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .sh-carousel__track,
+  .sh-carousel__control,
+  .sh-carousel__dot,
+  .sh-carousel__play-pause {
+    transition: none;
+  }
+}
