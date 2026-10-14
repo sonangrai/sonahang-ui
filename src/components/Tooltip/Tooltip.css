@@ -23,6 +23,11 @@
   /* Shrink to the text, but never grow into a paragraph. */
   width: max-content;
   max-width: 240px;
+  /*
+   * Slide along the trigger's edge, set inline when the tip would otherwise
+   * cross the viewport edge. Declared here so an ancestor's value can't leak in.
+   */
+  --sh-tooltip-shift: 0px;
   padding: 6px 10px;
   border-radius: 6px;
   /* Inverted surface: reads as an overlay, and flips with the theme for free. */
@@ -64,46 +69,48 @@
  * Each side needs its transform written twice because the reveal lift shares
  * the property with the centring offset: closed sits 4px low, open sits where
  * it belongs, and the pair is what the transition interpolates between. The
- * open rules win on specificity, so order here doesn't matter.
+ * open rules win on specificity, so order here doesn't matter. The shift
+ * slides the tip along the trigger's edge; the arrow moves back by the same
+ * amount, so it keeps pointing at the trigger.
  */
 .sh-tooltip__tip--top {
   bottom: calc(100% + 8px);
   left: 50%;
-  transform: translate(-50%, 4px);
+  transform: translate(calc(-50% + var(--sh-tooltip-shift)), 4px);
 }
 
 .sh-tooltip__tip--top.sh-tooltip__tip--open {
-  transform: translate(-50%, 0);
+  transform: translate(calc(-50% + var(--sh-tooltip-shift)), 0);
 }
 
 .sh-tooltip__tip--bottom {
   top: calc(100% + 8px);
   left: 50%;
-  transform: translate(-50%, 4px);
+  transform: translate(calc(-50% + var(--sh-tooltip-shift)), 4px);
 }
 
 .sh-tooltip__tip--bottom.sh-tooltip__tip--open {
-  transform: translate(-50%, 0);
+  transform: translate(calc(-50% + var(--sh-tooltip-shift)), 0);
 }
 
 .sh-tooltip__tip--left {
   right: calc(100% + 8px);
   top: 50%;
-  transform: translate(0, calc(-50% + 4px));
+  transform: translate(0, calc(-50% + var(--sh-tooltip-shift) + 4px));
 }
 
 .sh-tooltip__tip--left.sh-tooltip__tip--open {
-  transform: translate(0, -50%);
+  transform: translate(0, calc(-50% + var(--sh-tooltip-shift)));
 }
 
 .sh-tooltip__tip--right {
   left: calc(100% + 8px);
   top: 50%;
-  transform: translate(0, calc(-50% + 4px));
+  transform: translate(0, calc(-50% + var(--sh-tooltip-shift) + 4px));
 }
 
 .sh-tooltip__tip--right.sh-tooltip__tip--open {
-  transform: translate(0, -50%);
+  transform: translate(0, calc(-50% + var(--sh-tooltip-shift)));
 }
 
 /* Arrow: a square of the tip's own colour, rotated and half-buried. */
@@ -118,25 +125,25 @@
 
 .sh-tooltip__tip--top::after {
   top: 100%;
-  left: 50%;
+  left: calc(50% - var(--sh-tooltip-shift));
   margin: -4px 0 0 -4px;
 }
 
 .sh-tooltip__tip--bottom::after {
   bottom: 100%;
-  left: 50%;
+  left: calc(50% - var(--sh-tooltip-shift));
   margin: 0 0 -4px -4px;
 }
 
 .sh-tooltip__tip--left::after {
   left: 100%;
-  top: 50%;
+  top: calc(50% - var(--sh-tooltip-shift));
   margin: -4px 0 0 -4px;
 }
 
 .sh-tooltip__tip--right::after {
   right: 100%;
-  top: 50%;
+  top: calc(50% - var(--sh-tooltip-shift));
   margin: -4px -4px 0 0;
 }
 
@@ -153,11 +160,11 @@
   /* Drop the lift as well, so the tip appears in place rather than jumping. */
   .sh-tooltip__tip--top,
   .sh-tooltip__tip--bottom {
-    transform: translate(-50%, 0);
+    transform: translate(calc(-50% + var(--sh-tooltip-shift)), 0);
   }
 
   .sh-tooltip__tip--left,
   .sh-tooltip__tip--right {
-    transform: translate(0, -50%);
+    transform: translate(0, calc(-50% + var(--sh-tooltip-shift)));
   }
 }

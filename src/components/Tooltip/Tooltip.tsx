@@ -8,9 +8,9 @@ import {
   useRef,
   useState,
 } from "react";
-import type { HTMLAttributes, ReactElement, ReactNode } from "react";
+import type { CSSProperties, HTMLAttributes, ReactElement, ReactNode } from "react";
 
-import { resolveTooltipPlacement } from "./resolveTooltipPlacement";
+import { resolveTooltipPlacement, resolveTooltipShift } from "./resolveTooltipPlacement";
 import type { TooltipPlacement, TooltipSide } from "./resolveTooltipPlacement";
 import "./Tooltip.css";
 
@@ -36,12 +36,19 @@ export type TooltipProps = {
   /** Tip body. Nothing renders when this is empty. */
   content?: ReactNode;
   /**
-   * Which side of the trigger the tip sits on. Defaults to `top`.
+   * Which side of the trigger the tip prefers. Defaults to `top`.
    *
-   * `auto` measures the trigger against the viewport each time the tip opens
-   * and picks a side with room for it.
+   * The tip is measured against the viewport each time it opens. If the
+   * preferred side has no room, it flips to the opposite side, then to
+   * whichever side does. `auto` is the same as `top`.
    */
   placement?: TooltipPlacement;
+  /**
+   * Keeps the tip on screen by flipping it to another side and sliding it
+   * away from the viewport edge. Defaults to `true`. Turn it off to pin the
+   * tip to `placement` exactly.
+   */
+  avoidCollisions?: boolean;
   /** Milliseconds to wait before showing on hover. Defaults to 150. */
   delay?: number;
   /** Open state — makes the component controlled. */
@@ -66,6 +73,7 @@ export function Tooltip({
   children,
   content,
   placement = "top",
+  avoidCollisions = true,
   delay = 150,
   open: controlledOpen,
   defaultOpen = false,
@@ -124,29 +132,49 @@ export function Tooltip({
   useEffect(() => clearTimer, []);
 
   /*
-   * Auto placement. Measured while open rather than once on mount, because the
-   * trigger moves: scrolling it towards an edge should move the tip to the
+   * Collision handling. Measured while open rather than once on mount, because
+   * the trigger moves: scrolling it towards an edge should move the tip to the
    * side that still has room.
    */
-  const [autoSide, setAutoSide] = useState<TooltipSide>("top");
-  const isAuto = placement === "auto";
-  const side = isAuto ? autoSide : placement;
+  const preferred: TooltipSide = placement === "auto" ? "top" : placement;
+  /*
+   * Tagged with the side it was measured for, so a placement change made while
+   * closed isn't masked by a measurement taken for the old one.
+   */
+  const [measured, setMeasured] = useState<{
+    preferred: TooltipSide;
+    side: TooltipSide;
+    shift: number;
+  } | null>(null);
+  const position =
+    avoidCollisions && measured?.preferred === preferred
+      ? measured
+      : { side: preferred, shift: 0 };
+  const side = position.side;
 
   useMeasureEffect(() => {
-    if (!isAuto || !isOpen || !hasTip) return;
+    if (!avoidCollisions || !isOpen || !hasTip) return;
 
     const measure = () => {
       const wrapper = wrapperRef.current;
       const tip = tipRef.current;
       if (!wrapper || !tip) return;
 
-      setAutoSide(
-        resolveTooltipPlacement({
-          trigger: wrapper.getBoundingClientRect(),
-          // offsetWidth/Height ignore the reveal transform, unlike the rect.
-          tip: { width: tip.offsetWidth, height: tip.offsetHeight },
-          viewport: { width: window.innerWidth, height: window.innerHeight },
-        }),
+      // offsetWidth/Height ignore the reveal transform, unlike the rect.
+      const tipSize = { width: tip.offsetWidth, height: tip.offsetHeight };
+      // No layout to measure — a hidden ancestor, or a test environment.
+      if (tipSize.width === 0 && tipSize.height === 0) return;
+
+      const trigger = wrapper.getBoundingClientRect();
+      const viewport = { width: window.innerWidth, height: window.innerHeight };
+      const nextSide = resolveTooltipPlacement({ trigger, tip: tipSize, viewport, preferred });
+      const shift = resolveTooltipShift({ side: nextSide, trigger, tip: tipSize, viewport });
+
+      // Scroll fires constantly; only re-render when something moved.
+      setMeasured((prev) =>
+        prev?.preferred === preferred && prev.side === nextSide && prev.shift === shift
+          ? prev
+          : { preferred, side: nextSide, shift },
       );
     };
 
@@ -159,7 +187,7 @@ export function Tooltip({
       window.removeEventListener("scroll", measure, true);
       window.removeEventListener("resize", measure);
     };
-  }, [isAuto, isOpen, hasTip]);
+  }, [avoidCollisions, preferred, isOpen, hasTip]);
 
   /*
    * Escape dismisses the tip, per the APG. Bound to the document rather than
@@ -235,6 +263,11 @@ export function Tooltip({
           ]
             .filter(Boolean)
             .join(" ")}
+          style={
+            position.shift
+              ? ({ "--sh-tooltip-shift": `${position.shift}px` } as CSSProperties)
+              : undefined
+          }
         >
           {content}
         </span>
