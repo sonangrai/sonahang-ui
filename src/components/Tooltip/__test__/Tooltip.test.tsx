@@ -422,15 +422,58 @@ describe("Tooltip", () => {
       await waitFor(() => expect(tip()).toHaveClass("sh-tooltip__tip--bottom"));
     });
 
-    it("leaves a fixed placement alone", async () => {
+    it("flips a fixed placement that has no room", async () => {
       stubLayout({ top: 4, bottom: 24, left: 400, right: 500 });
       const user = userEvent.setup();
       render(<Target placement="top" />);
 
       await user.hover(trigger());
 
-      // No room above, but the caller asked for top and gets it.
+      expect(tip()).toHaveClass("sh-tooltip__tip--bottom");
+    });
+
+    it("keeps a fixed placement that fits", async () => {
+      stubLayout({ top: 400, bottom: 420, left: 400, right: 500 });
+      const user = userEvent.setup();
+      render(<Target placement="bottom" />);
+
+      await user.hover(trigger());
+
+      expect(tip()).toHaveClass("sh-tooltip__tip--bottom");
+    });
+
+    it("pins the placement when avoidCollisions is off", async () => {
+      stubLayout({ top: 4, bottom: 24, left: 0, right: 40 });
+      const user = userEvent.setup();
+      render(<Target placement="top" avoidCollisions={false} />);
+
+      await user.hover(trigger());
+
+      // No room above, but the caller opted out and gets top regardless.
       expect(tip()).toHaveClass("sh-tooltip__tip--top");
+      expect(tip()?.style.getPropertyValue("--sh-tooltip-shift")).toBe("");
+    });
+
+    it("slides the tip in from the viewport edge", async () => {
+      // Centred on a trigger at x=20, a 200px tip would start at -80.
+      stubLayout({ top: 400, bottom: 420, left: 0, right: 40 });
+      const user = userEvent.setup();
+      render(<Target placement="top" />);
+
+      await user.hover(trigger());
+
+      expect(tip()).toHaveClass("sh-tooltip__tip--top");
+      expect(tip()?.style.getPropertyValue("--sh-tooltip-shift")).toBe("88px");
+    });
+
+    it("sets no shift when the tip is clear of the edges", async () => {
+      stubLayout({ top: 400, bottom: 420, left: 400, right: 500 });
+      const user = userEvent.setup();
+      render(<Target placement="top" />);
+
+      await user.hover(trigger());
+
+      expect(tip()?.style.getPropertyValue("--sh-tooltip-shift")).toBe("");
     });
   });
 

@@ -16,6 +16,7 @@ const meta = {
       control: "inline-radio",
       options: ["auto", "top", "bottom", "left", "right"],
     },
+    avoidCollisions: { control: "boolean" },
     delay: { control: { type: "number", min: 0, step: 50 } },
     disabled: { control: "boolean" },
     content: { control: "text" },
@@ -52,9 +53,10 @@ export const Placements: Story = {
 };
 
 /*
- * Buttons pinned to the edges of the viewport, so `auto` has a real decision
- * to make. Anything centred in a cell has room above it and simply gets `top`,
- * which is what an earlier version of this story accidentally demonstrated.
+ * Buttons pinned to the edges of the viewport, so collision handling has a real
+ * decision to make. Anything centred in a cell has room above it and simply
+ * gets `top`, which is what an earlier version of this story accidentally
+ * demonstrated.
  */
 const EDGES = [
   ["start", "start"],
@@ -74,17 +76,22 @@ const edgeLabel = (block: string, inline: string) =>
     .join(" ") || "middle";
 
 /**
- * `placement="auto"` measures the trigger against the viewport each time the
- * tip opens, then re-measures on scroll and resize.
+ * Every tip is measured against the viewport each time it opens, then
+ * re-measured on scroll and resize. `placement` is the preferred side, not a
+ * promise.
  *
- * The top row flips below its triggers — there's nothing above them. Everything
- * else keeps `top`, which is correct: a side is only chosen once neither
- * vertical direction fits, and that takes a genuinely short viewport. Drag the
- * preview pane short to see the middle row swing out sideways.
+ * The top row flips below its triggers — there's nothing above them. The left
+ * and right columns slide their tips in from the edge, with the arrow still on
+ * the trigger. Change `placement` to see each preference flip to its opposite,
+ * or switch off `avoidCollisions` to see the tips clip.
  */
-export const AutoPlacement: Story = {
-  name: "Auto placement",
-  parameters: { controls: { disable: true }, layout: "fullscreen" },
+export const EdgeCollisions: Story = {
+  name: "Edge collisions",
+  args: { placement: "top" },
+  parameters: {
+    controls: { include: ["placement", "avoidCollisions"] },
+    layout: "fullscreen",
+  },
   render: (args) => (
     <div
       style={{
@@ -97,7 +104,6 @@ export const AutoPlacement: Story = {
         <Tooltip
           key={`${block}-${inline}`}
           {...args}
-          placement="auto"
           content={`Pinned ${edgeLabel(block, inline)}`}
           style={{ alignSelf: block, justifySelf: inline }}
         >
