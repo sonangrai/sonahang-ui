@@ -1,0 +1,210 @@
+/*
+ * Don't inherit the consumer's box model — the published stylesheet ships no
+ * reset. The track styling itself comes from RangeSlider; this file only lays
+ * the parts out.
+ */
+.sh-audio,
+.sh-audio__play,
+.sh-audio__skip,
+.sh-audio__mute {
+  box-sizing: border-box;
+}
+
+/*
+ * A container, so the volume slider can drop out when the player is narrow
+ * rather than when the viewport is — a player in a sidebar on a wide screen
+ * is just as cramped as one on a phone.
+ */
+.sh-audio {
+  container-type: inline-size;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background-color: var(--color-bg-surface);
+  font-family: var(--font-family-sans);
+  color: var(--color-text);
+}
+
+/* The native element is only the engine; it never shows its own controls. */
+.sh-audio__media {
+  display: none;
+}
+
+.sh-audio__transport {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.sh-audio__play {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background-color: var(--color-accent-fill-bg);
+  color: var(--color-accent-fill-text);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.sh-audio__play svg {
+  width: 18px;
+  height: 18px;
+}
+
+.sh-audio__play:hover:not(:disabled) {
+  background-color: var(--color-accent-hover);
+}
+
+.sh-audio__play:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.sh-audio__play:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.sh-audio__body {
+  flex: 1;
+  /* Lets long titles truncate instead of pushing the controls out. */
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sh-audio__meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.sh-audio__title,
+.sh-audio__subtitle {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: var(--line-height-normal);
+}
+
+.sh-audio__title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.sh-audio__subtitle {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-subtle);
+}
+
+.sh-audio__controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sh-audio__time {
+  flex: none;
+  /* Fixed width with tabular digits, so the seek bar doesn't twitch every second. */
+  min-width: 4ch;
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-subtle);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.sh-audio__seek {
+  flex: 1;
+  min-width: 0;
+}
+
+.sh-audio__volume {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 4px;
+}
+
+/*
+ * Previous / Next share the mute button's quiet treatment — Play is the one
+ * control that should stand out.
+ */
+.sh-audio__skip,
+.sh-audio__mute {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background-color: transparent;
+  color: var(--color-text-subtle);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.sh-audio__skip svg,
+.sh-audio__mute svg {
+  width: 16px;
+  height: 16px;
+}
+
+.sh-audio__skip:hover,
+.sh-audio__mute:hover {
+  background-color: var(--color-bg-subtle);
+  color: var(--color-text);
+}
+
+.sh-audio__skip:focus-visible,
+.sh-audio__mute:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.sh-audio__volume-slider {
+  width: 72px;
+}
+
+.sh-audio__error {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+  color: var(--color-danger);
+}
+
+.sh-audio--error {
+  border-color: var(--color-danger-border);
+}
+
+/* Mute stays — it's the one volume control that still fits and still matters. */
+@container (max-width: 360px) {
+  .sh-audio__volume-slider {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sh-audio__play,
+  .sh-audio__skip,
+  .sh-audio__mute {
+    transition: none;
+  }
+}
