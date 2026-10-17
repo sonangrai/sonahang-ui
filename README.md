@@ -88,6 +88,8 @@ Navigation: `Tabs`, `Breadcrumb`, `Pagination`, `Stepper`, `Accordion`
 
 Data display: `Avatar`, `Tag`, `Chip`, `Carousel`
 
+Media: `AudioPlayer`, `AudioPlaylist`
+
 Every component, every prop, and every state is documented with live controls
 in [Storybook](https://github.com/sonangrai/sonahang-ui) — that's the real
 reference, this file is the summary.

@@ -175,6 +175,27 @@ export type {
   SegmentedControlOption,
 } from './components/SegmentedControl';
 
+export {
+  AudioPlayer,
+  AudioPlaylist,
+  formatAudioTime,
+  playModes,
+  getNextTrack,
+  getPreviousTrack,
+  createShuffleOrder,
+} from './components/AudioPlayer';
+export type {
+  AudioPlayerProps,
+  AudioPlayerLabels,
+  AudioPlaylistProps,
+  AudioPlaylistLabels,
+  AudioTrack,
+  PlayMode,
+  PlaylistAdvance,
+  PlaylistPosition,
+  PlaylistStep,
+} from './components/AudioPlayer';
+
 /**
  * Design tokens. The stylesheet already defines every color as a CSS var
  * (`--color-accent-600`, `--color-bg-surface`, …) — these are the same

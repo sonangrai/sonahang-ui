@@ -1,0 +1,201 @@
+.sh-playlist,
+.sh-playlist__mode,
+.sh-playlist__track {
+  box-sizing: border-box;
+}
+
+.sh-playlist {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  font-family: var(--font-family-sans);
+}
+
+/* --- Play-mode button --------------------------------------------------- */
+.sh-playlist__mode {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background-color: transparent;
+  color: var(--color-text-subtle);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.sh-playlist__mode svg {
+  width: 16px;
+  height: 16px;
+}
+
+.sh-playlist__mode:hover {
+  background-color: var(--color-bg-subtle);
+  color: var(--color-text);
+}
+
+/*
+ * Any mode but plain in-order playback is a setting someone turned on, so it
+ * reads as on. The icon changes shape too — colour isn't the only signal.
+ */
+.sh-playlist__mode--active,
+.sh-playlist__mode--active:hover {
+  background-color: var(--color-accent-subtle-bg);
+  color: var(--color-accent-subtle-text);
+}
+
+.sh-playlist__mode:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* --- Track list --------------------------------------------------------- */
+.sh-playlist__tracks {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background-color: var(--color-bg-surface);
+}
+
+.sh-playlist__track {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  background-color: transparent;
+  font: inherit;
+  color: var(--color-text);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.sh-playlist__track:hover {
+  background-color: var(--color-bg-subtle);
+}
+
+.sh-playlist__track:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
+}
+
+.sh-playlist__track[aria-current="true"] {
+  background-color: var(--color-accent-subtle-bg);
+}
+
+.sh-playlist__marker {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2ch;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-subtle);
+  font-variant-numeric: tabular-nums;
+}
+
+.sh-playlist__track[aria-current="true"] .sh-playlist__marker,
+.sh-playlist__track[aria-current="true"] .sh-playlist__title {
+  color: var(--color-accent-subtle-text);
+}
+
+.sh-playlist__text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.sh-playlist__title,
+.sh-playlist__subtitle {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: var(--line-height-normal);
+}
+
+.sh-playlist__title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.sh-playlist__subtitle {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-subtle);
+}
+
+.sh-playlist__duration {
+  flex: none;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-subtle);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Now-playing bars --------------------------------------------------- */
+.sh-playlist__equalizer {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+}
+
+.sh-playlist__equalizer span {
+  width: 3px;
+  height: 100%;
+  border-radius: 1px;
+  background-color: currentColor;
+  transform-origin: bottom;
+  animation: sh-playlist-bounce 0.9s ease-in-out infinite;
+}
+
+.sh-playlist__equalizer span:nth-child(2) {
+  animation-delay: -0.3s;
+}
+
+.sh-playlist__equalizer span:nth-child(3) {
+  animation-delay: -0.6s;
+}
+
+@keyframes sh-playlist-bounce {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+/* The bars hold still at staggered heights — still clearly "playing". */
+@media (prefers-reduced-motion: reduce) {
+  .sh-playlist__mode,
+  .sh-playlist__track {
+    transition: none;
+  }
+
+  .sh-playlist__equalizer span {
+    animation: none;
+  }
+
+  .sh-playlist__equalizer span:nth-child(1) {
+    transform: scaleY(0.6);
+  }
+
+  .sh-playlist__equalizer span:nth-child(3) {
+    transform: scaleY(0.4);
+  }
+}
