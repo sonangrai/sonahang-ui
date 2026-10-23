@@ -127,14 +127,28 @@
   }
 }
 
+/* The wordmark and nav no longer share a row: the wordmark gets its own,
+   and the nav drops onto a second, centred row beneath it. Two rows is too
+   much height to pin over the content, so it scrolls away instead. */
 @media (max-width: 620px) {
   .site-header {
-    gap: 12px;
-    padding-inline: 16px;
+    position: static;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 16px 8px;
+  }
+
+  .site-header__brand {
+    flex-basis: 100%;
+    display: flex;
+    justify-content: center;
   }
 
   .site-header__nav {
     gap: 0;
+    margin-left: 0;
+    justify-content: center;
   }
 
   .site-header__link {
@@ -142,9 +156,9 @@
   }
 }
 
-/* Three labelled links plus the wordmark no longer fit; the outbound two
-   fall back to their icons, and keep their names via aria-label. */
-@media (max-width: 560px) {
+/* Even on a row of their own, three labelled links don't fit; the outbound
+   two fall back to their icons, and keep their names via aria-label. */
+@media (max-width: 340px) {
   .site-header__link[target="_blank"] .site-header__link-label {
     display: none;
   }
