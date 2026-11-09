@@ -1,0 +1,265 @@
+/*
+ * Don't inherit the consumer's box model — the published stylesheet ships no
+ * reset, and the card and its buttons are sized with padding.
+ */
+.sh-toast,
+.sh-toast__icon,
+.sh-toast__action,
+.sh-toast__dismiss,
+.sh-toaster,
+.sh-toaster__item {
+  box-sizing: border-box;
+}
+
+/* ---------- Toast card ---------- */
+
+.sh-toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background-color: var(--color-bg-canvas);
+  color: var(--color-text);
+  font-family: var(--font-family-sans);
+  box-shadow:
+    0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.sh-toast__icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  /* Optical alignment with the first line of text, not the box. */
+  margin-top: 1px;
+  color: var(--sh-toast-icon, var(--color-text-subtle));
+}
+
+.sh-toast__icon > svg {
+  width: 100%;
+  height: 100%;
+}
+
+/*
+ * Like Alert, the palette stays mono: the icon, not colour, is what tells
+ * variants apart. Only errors borrow the danger hue.
+ */
+.sh-toast--success,
+.sh-toast--warning {
+  --sh-toast-icon: var(--color-accent);
+}
+
+.sh-toast--error {
+  --sh-toast-icon: var(--color-danger);
+}
+
+/* Drawn here rather than with Spinner, which brings its own status role. */
+.sh-toast__spinner {
+  width: 16px;
+  height: 16px;
+  margin: 2px;
+  border: 2px solid var(--color-border-strong);
+  border-top-color: var(--color-text);
+  border-radius: 50%;
+  animation: sh-toast-spin 0.7s linear infinite;
+}
+
+@keyframes sh-toast-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.sh-toast__content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sh-toast__title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+}
+
+.sh-toast__description {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-subtle);
+}
+
+.sh-toast__action {
+  flex-shrink: 0;
+  align-self: center;
+  padding: 4px 10px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 6px;
+  background: none;
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.sh-toast__action:hover {
+  background-color: var(--color-bg-subtle);
+}
+
+.sh-toast__action:focus-visible,
+.sh-toast__dismiss:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+.sh-toast__dismiss {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background-color: transparent;
+  color: var(--color-text-subtle);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.sh-toast__dismiss > svg {
+  width: 12px;
+  height: 12px;
+}
+
+.sh-toast__dismiss:hover {
+  background-color: var(--color-bg-subtle);
+}
+
+/* ---------- Toaster stack ---------- */
+
+/* The landmark wrapper carries no layout of its own. */
+.sh-toaster-region {
+  display: contents;
+}
+
+.sh-toaster {
+  /* Override to change the distance from the viewport edge, width and layering. */
+  --sh-toaster-offset: 16px;
+  --sh-toaster-width: 360px;
+  --sh-toaster-z: 1000;
+
+  position: fixed;
+  z-index: var(--sh-toaster-z);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(var(--sh-toaster-width), calc(100vw - 2 * var(--sh-toaster-offset)));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  /* The empty space around toasts mustn't swallow clicks meant for the page. */
+  pointer-events: none;
+
+  /*
+   * The list is a popover, for the top layer. Undo the UA popover styles —
+   * a centred, bordered, scrollable box — so only the position rules apply.
+   */
+  inset: auto;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  overflow: visible;
+}
+
+/* The popover's backdrop would cover the page; it has no business showing. */
+.sh-toaster::backdrop {
+  display: none;
+}
+
+.sh-toaster__item {
+  pointer-events: auto;
+  animation: sh-toast-enter 0.2s ease both;
+}
+
+/* Newest toast sits nearest the edge it came from. */
+.sh-toaster--top {
+  top: var(--sh-toaster-offset);
+  flex-direction: column-reverse;
+  --sh-toast-from: -8px;
+}
+
+.sh-toaster--bottom {
+  bottom: var(--sh-toaster-offset);
+  --sh-toast-from: 8px;
+}
+
+.sh-toaster--left {
+  left: var(--sh-toaster-offset);
+}
+
+.sh-toaster--right {
+  right: var(--sh-toaster-offset);
+}
+
+.sh-toaster--center {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Re-rendered after moving into or out of a dialog — already on screen. */
+.sh-toaster__item--shown {
+  animation: none;
+}
+
+/* Matches EXIT_DURATION_MS in toast.store.ts. */
+.sh-toaster__item--closing {
+  pointer-events: none;
+  animation: sh-toast-exit 0.2s ease both;
+}
+
+@keyframes sh-toast-enter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--sh-toast-from, 8px)) scale(0.98);
+  }
+}
+
+@keyframes sh-toast-exit {
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sh-toaster__item,
+  .sh-toaster__item--closing {
+    animation: none;
+  }
+
+  /* Without the animation a closing toast would sit there fully opaque. */
+  .sh-toaster__item--closing {
+    opacity: 0;
+  }
+
+  .sh-toast__action,
+  .sh-toast__dismiss {
+    transition: none;
+  }
+
+  /* Slowed rather than stopped: a frozen ring reads as nothing happening. */
+  .sh-toast__spinner {
+    animation-duration: 2s;
+  }
+}

@@ -53,10 +53,11 @@ export function installDialogShim() {
 
   /*
    * Escape reaches the topmost modal as a cancelable `cancel`; the dialog
-   * closes only if nothing calls preventDefault.
+   * closes only if nothing calls preventDefault. As in browsers, a keydown
+   * that was itself default-prevented never becomes a `cancel`.
    */
   document.addEventListener("keydown", (event) => {
-    if (event.key !== "Escape" || openModals.length === 0) return;
+    if (event.key !== "Escape" || event.defaultPrevented || openModals.length === 0) return;
 
     const topmost = openModals[openModals.length - 1];
     if (fire(topmost, "cancel", true)) topmost.close();
