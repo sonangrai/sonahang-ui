@@ -1,0 +1,154 @@
+/*
+ * Don't inherit the consumer's box model — the published stylesheet ships no
+ * reset, and rows are sized with padding.
+ */
+.sh-collapsible,
+.sh-collapsible__item,
+.sh-collapsible__row,
+.sh-collapsible__content {
+  box-sizing: border-box;
+}
+
+.sh-collapsible {
+  /* Override these to change the row spacing and per-level indent. */
+  --sh-collapsible-indent: 20px;
+  --sh-collapsible-row-x: 8px;
+
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+}
+
+.sh-collapsible__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 36px;
+  padding: 6px var(--sh-collapsible-row-x);
+  /* Indentation comes from depth, which each item sets on itself. */
+  padding-left: calc(
+    var(--sh-collapsible-row-x) + var(--sh-collapsible-depth, 0) * var(--sh-collapsible-indent)
+  );
+  border: none;
+  border-radius: 6px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+
+.sh-collapsible__trigger {
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.sh-collapsible__trigger:not(:disabled):hover {
+  background-color: var(--color-bg-subtle);
+}
+
+.sh-collapsible__trigger:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
+}
+
+.sh-collapsible__trigger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sh-collapsible__item--open > .sh-collapsible__trigger {
+  font-weight: var(--font-weight-medium);
+}
+
+/* Fixed-size slot so leaves and expandable rows line up. */
+.sh-collapsible__indicator,
+.sh-collapsible__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  color: var(--color-text-subtle);
+}
+
+.sh-collapsible__indicator > svg,
+.sh-collapsible__icon > svg {
+  width: 100%;
+  height: 100%;
+}
+
+.sh-collapsible__chevron {
+  transition: transform 0.2s ease;
+}
+
+/* Child combinator so an open parent doesn't rotate closed descendants. */
+.sh-collapsible__item--open > .sh-collapsible__row .sh-collapsible__chevron {
+  transform: rotate(90deg);
+}
+
+.sh-collapsible__title {
+  flex: 1;
+  min-width: 0;
+}
+
+/*
+ * Height animation without measuring: a grid row transitions from 0fr to 1fr,
+ * which resolves against the content's natural height.
+ */
+.sh-collapsible__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.2s ease;
+}
+
+.sh-collapsible__item--open > .sh-collapsible__panel {
+  grid-template-rows: 1fr;
+}
+
+/*
+ * `visibility: hidden` keeps collapsed contents out of the tab order and the
+ * accessibility tree while the panel stays mounted to animate. The delay
+ * holds visibility until the collapse finishes.
+ *
+ * Child combinators throughout: a nested panel's visibility must follow its
+ * own item, not the nearest open ancestor.
+ */
+.sh-collapsible__panel > .sh-collapsible__panel-inner {
+  overflow: hidden;
+  visibility: hidden;
+  transition: visibility 0s linear 0.2s;
+}
+
+.sh-collapsible__item--open > .sh-collapsible__panel > .sh-collapsible__panel-inner {
+  visibility: visible;
+  transition: visibility 0s;
+}
+
+/*
+ * Free-form content (anything that isn't another item) is indented to line
+ * up with its item's title — past the 16px indicator and 8px gap.
+ */
+.sh-collapsible__content > :not(.sh-collapsible__item) {
+  margin: 0;
+  padding: 4px var(--sh-collapsible-row-x) 8px;
+  padding-left: calc(
+    var(--sh-collapsible-row-x) + 24px + var(--sh-collapsible-depth, 0) *
+      var(--sh-collapsible-indent)
+  );
+  color: var(--color-text-subtle);
+  line-height: var(--line-height-relaxed);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sh-collapsible__panel,
+  .sh-collapsible__chevron,
+  .sh-collapsible__panel-inner,
+  .sh-collapsible__trigger {
+    transition: none !important;
+  }
+}

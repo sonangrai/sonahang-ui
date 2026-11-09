@@ -110,6 +110,9 @@ export type {
   AccordionHeadingLevel,
 } from './components/Accordion';
 
+export { Collapsible, CollapsibleItem } from './components/Collapsible';
+export type { CollapsibleProps, CollapsibleItemProps } from './components/Collapsible';
+
 export { Stepper, Step } from './components/Stepper';
 export type { StepperProps, StepProps, StepperOrientation, StepStatus } from './components/Stepper';
 

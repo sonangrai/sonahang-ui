@@ -84,7 +84,7 @@ Forms: `Input`, `InputOtp`, `Textarea`, `Select`, `Checkbox`, `Radio`, `Switch`,
 
 Feedback: `Alert`, `Spinner`, `ProgressBar`, `Tooltip`, `Dialog`, `Drawer`
 
-Navigation: `Tabs`, `Breadcrumb`, `Pagination`, `Stepper`, `Accordion`
+Navigation: `Tabs`, `Breadcrumb`, `Pagination`, `Stepper`, `Accordion`, `Collapsible`
 
 Data display: `Avatar`, `Tag`, `Chip`, `Carousel`
 
