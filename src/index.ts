@@ -110,6 +110,9 @@ export type {
   AccordionHeadingLevel,
 } from './components/Accordion';
 
+export { Collapsible, CollapsibleItem } from './components/Collapsible';
+export type { CollapsibleProps, CollapsibleItemProps } from './components/Collapsible';
+
 export { Stepper, Step } from './components/Stepper';
 export type { StepperProps, StepProps, StepperOrientation, StepStatus } from './components/Stepper';
 
@@ -156,6 +159,19 @@ export type { ProgressBarProps, ProgressBarSize } from './components/ProgressBar
 
 export { Alert, alertVariants } from './components/Alert';
 export type { AlertProps, AlertVariant } from './components/Alert';
+
+export { Toast, Toaster, toast, toastVariants, toastPositions } from './components/Toast';
+export type {
+  ToastProps,
+  ToasterProps,
+  ToastAction,
+  ToastFunction,
+  ToastOptions,
+  ToastPromiseContent,
+  ToastPromiseMessages,
+  ToastVariant,
+  ToastPosition,
+} from './components/Toast';
 
 export { FileDrop, isFileAccepted, formatFileSize } from './components/FileDrop';
 export type { FileDropProps } from './components/FileDrop';

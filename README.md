@@ -82,9 +82,9 @@ Actions: `Button`, `Dropdown`, `SegmentedControl`
 
 Forms: `Input`, `InputOtp`, `Textarea`, `Select`, `Checkbox`, `Radio`, `Switch`, `RangeSlider`, `MinMaxSlider`, `FileDrop`
 
-Feedback: `Alert`, `Spinner`, `ProgressBar`, `Tooltip`, `Dialog`, `Drawer`
+Feedback: `Alert`, `Toast`, `Spinner`, `ProgressBar`, `Tooltip`, `Dialog`, `Drawer`
 
-Navigation: `Tabs`, `Breadcrumb`, `Pagination`, `Stepper`, `Accordion`
+Navigation: `Tabs`, `Breadcrumb`, `Pagination`, `Stepper`, `Accordion`, `Collapsible`
 
 Data display: `Avatar`, `Tag`, `Chip`, `Carousel`
 
