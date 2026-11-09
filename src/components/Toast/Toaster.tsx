@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } fr
 import type { FocusEvent, KeyboardEvent } from "react";
 
 import { portalInto } from "../../internal/portalInto";
+import { useTopModalDialog } from "../../internal/useTopModalDialog";
 import { Toast } from "./Toast";
 import { toast, toastStore } from "./toast.store";
 import type { ToastRecord } from "./toast.store";
@@ -11,6 +12,17 @@ import "./Toast.css";
 // Server rendering has no layout to measure, and React warns about
 // useLayoutEffect there; the overflow check simply waits for the client.
 const useIsomorphicLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
+
+const supportsPopover = () =>
+  typeof HTMLElement !== "undefined" && typeof HTMLElement.prototype.showPopover === "function";
+
+/*
+ * Each toast's timer progress, kept outside React. The stack is rebuilt
+ * whenever it moves into or out of a modal dialog (a portal can't change
+ * container without remounting), and this is what stops that from restarting
+ * timers and replaying the enter animation.
+ */
+const progress = new Map<string, { version: number; duration: number; remaining: number }>();
 
 export type ToasterProps = {
   /** Corner or edge the stack sits in. Defaults to `bottom-right`. */
@@ -31,6 +43,10 @@ export type ToasterProps = {
   /**
    * Where to render. `true` (default) portals to `document.body`, an element
    * portals there, `false` renders in place.
+   *
+   * While a modal `Dialog` or `Drawer` is open, toasts move inside it
+   * regardless — everything outside a modal is inert, so they'd otherwise be
+   * unclickable.
    */
   portal?: boolean | HTMLElement;
   className?: string;
@@ -43,6 +59,10 @@ export type ToasterProps = {
  * Timers pause while the pointer is over the stack, while focus is inside
  * it, and while the tab is hidden, so nothing disappears mid-read.
  * Escape closes the focused toast.
+ *
+ * Toasts stay on top of, and usable over, an open modal `Dialog` or `Drawer`:
+ * the stack is a popover, so it's in the top layer, and it moves into the
+ * topmost modal while one is open, so it isn't made inert.
  */
 export function Toaster({
   position = "bottom-right",
@@ -64,6 +84,28 @@ export function Toaster({
   const [focused, setFocused] = useState(false);
   const documentHidden = useDocumentHidden();
   const paused = hovered || focused || documentHidden;
+
+  const listRef = useRef<HTMLOListElement>(null);
+  const topModal = useTopModalDialog();
+  // Only follow a modal when the stack can be a popover: rendered into a
+  // dialog without the top layer, it would be clipped by the dialog's
+  // overflow and positioned against its transform.
+  const target = topModal && supportsPopover() ? topModal : portal;
+
+  // A new container means a new list element, and a popover leaves the top
+  // layer whenever it's moved — so show it again each time. Doing so after
+  // the modal opened is also what stacks it above that modal.
+  useIsomorphicLayoutEffect(() => {
+    const list = listRef.current;
+    if (!list || !supportsPopover() || list.matches(":popover-open")) return;
+    list.showPopover();
+  }, [target]);
+
+  useEffect(() => {
+    for (const id of progress.keys()) {
+      if (!toasts.some((item) => item.id === id)) progress.delete(id);
+    }
+  }, [toasts]);
 
   // Before paint, so the toast pushed out of the stack animates away rather
   // than vanishing for a frame first.
@@ -87,6 +129,10 @@ export function Toaster({
      */
     <section aria-label={label} className="sh-toaster-region">
       <ol
+        ref={listRef}
+        // `manual`: no light dismiss, and it doesn't close other popovers.
+        // Omitted where unsupported, since such a browser can't show it.
+        popover={supportsPopover() ? "manual" : undefined}
         className={[
           "sh-toaster",
           `sh-toaster--${vertical}`,
@@ -114,7 +160,7 @@ export function Toaster({
         ))}
       </ol>
     </section>,
-    portal,
+    target,
   );
 }
 
@@ -128,24 +174,30 @@ type ToasterItemProps = {
 
 function ToasterItem({ item, duration, paused, closeButton, dismissLabel }: ToasterItemProps) {
   const { id, version, closing } = item;
-  const remaining = useRef(duration);
 
-  // An update (same id, new content) restarts the clock. Declared before the
-  // timer effect so it runs first, after the timer's cleanup has recorded
-  // the time used.
+  // Remounted after a move rather than newly shown: skip the enter animation.
+  const [alreadyShown] = useState(() => progress.has(id));
+
+  // A new toast, or an update (same id, new content), starts a fresh clock;
+  // a remount picks up where it left off. Declared before the timer effect
+  // so it runs first, after the timer's cleanup has recorded the time used.
   useEffect(() => {
-    remaining.current = duration;
-  }, [version, duration]);
+    const saved = progress.get(id);
+    if (!saved || saved.version !== version || saved.duration !== duration) {
+      progress.set(id, { version, duration, remaining: duration });
+    }
+  }, [id, version, duration]);
 
   useEffect(() => {
-    if (closing || paused || !Number.isFinite(duration)) return;
+    const saved = progress.get(id);
+    if (!saved || closing || paused || !Number.isFinite(duration)) return;
 
     const startedAt = Date.now();
-    const timer = setTimeout(() => toast.dismiss(id), Math.max(0, remaining.current));
+    const timer = setTimeout(() => toast.dismiss(id), Math.max(0, saved.remaining));
 
     return () => {
       clearTimeout(timer);
-      remaining.current -= Date.now() - startedAt;
+      saved.remaining -= Date.now() - startedAt;
     };
   }, [id, version, duration, paused, closing]);
 
@@ -153,6 +205,9 @@ function ToasterItem({ item, duration, paused, closeButton, dismissLabel }: Toas
 
   const handleKeyDown = (event: KeyboardEvent<HTMLLIElement>) => {
     if (event.key === "Escape") {
+      // Inside a modal, Escape would also close the dialog. preventDefault
+      // stops the browser turning this keypress into the dialog's `cancel`.
+      event.preventDefault();
       event.stopPropagation();
       dismiss();
     }
@@ -168,7 +223,11 @@ function ToasterItem({ item, duration, paused, closeButton, dismissLabel }: Toas
 
   return (
     <li
-      className={["sh-toaster__item", closing && "sh-toaster__item--closing"]
+      className={[
+        "sh-toaster__item",
+        alreadyShown && "sh-toaster__item--shown",
+        closing && "sh-toaster__item--closing",
+      ]
         .filter(Boolean)
         .join(" ")}
       data-variant={item.variant}

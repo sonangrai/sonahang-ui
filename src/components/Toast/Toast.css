@@ -57,6 +57,23 @@
   --sh-toast-icon: var(--color-danger);
 }
 
+/* Drawn here rather than with Spinner, which brings its own status role. */
+.sh-toast__spinner {
+  width: 16px;
+  height: 16px;
+  margin: 2px;
+  border: 2px solid var(--color-border-strong);
+  border-top-color: var(--color-text);
+  border-radius: 50%;
+  animation: sh-toast-spin 0.7s linear infinite;
+}
+
+@keyframes sh-toast-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .sh-toast__content {
   flex: 1;
   min-width: 0;
@@ -153,6 +170,21 @@
   list-style: none;
   /* The empty space around toasts mustn't swallow clicks meant for the page. */
   pointer-events: none;
+
+  /*
+   * The list is a popover, for the top layer. Undo the UA popover styles —
+   * a centred, bordered, scrollable box — so only the position rules apply.
+   */
+  inset: auto;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  overflow: visible;
+}
+
+/* The popover's backdrop would cover the page; it has no business showing. */
+.sh-toaster::backdrop {
+  display: none;
 }
 
 .sh-toaster__item {
@@ -183,6 +215,11 @@
 .sh-toaster--center {
   left: 50%;
   transform: translateX(-50%);
+}
+
+/* Re-rendered after moving into or out of a dialog — already on screen. */
+.sh-toaster__item--shown {
+  animation: none;
 }
 
 /* Matches EXIT_DURATION_MS in toast.store.ts. */
@@ -219,5 +256,10 @@
   .sh-toast__action,
   .sh-toast__dismiss {
     transition: none;
+  }
+
+  /* Slowed rather than stopped: a frozen ring reads as nothing happening. */
+  .sh-toast__spinner {
+    animation-duration: 2s;
   }
 }

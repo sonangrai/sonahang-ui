@@ -1,6 +1,8 @@
+import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { Button } from "../Button";
+import { Dialog } from "../Dialog";
 import { Toast } from "./Toast";
 import { Toaster } from "./Toaster";
 import { toast } from "./toast.store";
@@ -109,6 +111,49 @@ export const UpdateInPlace: Story = {
   ),
 };
 
+const fakeRequest = (fail: boolean) =>
+  new Promise<{ name: string }>((resolve, reject) =>
+    setTimeout(
+      () => (fail ? reject(new Error("Network unreachable")) : resolve({ name: "report.pdf" })),
+      2000,
+    ),
+  );
+
+/**
+ * `toast.promise` shows a loading toast and turns it into success or error,
+ * in place, when the promise settles. Messages can use the result.
+ */
+// Trailing underscore: `Promise` would shadow the global in this module.
+export const Promise_: Story = {
+  render: (args) => (
+    <>
+      <div style={row}>
+        {[false, true].map((fail) => (
+          <Button
+            key={String(fail)}
+            variant={fail ? "secondary" : "primary"}
+            onClick={() =>
+              toast
+                .promise(fakeRequest(fail), {
+                  loading: "Uploading…",
+                  success: (file) => ({ title: "Uploaded", description: file.name }),
+                  error: (reason) => ({
+                    title: "Upload failed",
+                    description: (reason as Error).message,
+                  }),
+                })
+                .catch(() => {})
+            }
+          >
+            {fail ? "Upload (fails)" : "Upload"}
+          </Button>
+        ))}
+      </div>
+      <Toaster {...args} />
+    </>
+  ),
+};
+
 export const Persistent: Story = {
   args: { duration: Infinity },
   render: (args) => (
@@ -125,6 +170,43 @@ export const Positions: Story = {
   render: Default.render,
 };
 
+/**
+ * Toasts stay above, and clickable over, an open modal — the stack moves into
+ * the dialog and re-enters the top layer. Try the toast's Undo and close
+ * buttons, and Escape on a focused toast: it closes the toast, not the dialog.
+ */
+export const OverADialog: Story = {
+  name: "Over a dialog",
+  render: (args) => {
+    const [open, setOpen] = useState(false);
+
+    return (
+      <>
+        <Button onClick={() => setOpen(true)}>Open dialog</Button>
+        <Dialog
+          open={open}
+          onClose={() => setOpen(false)}
+          title="Edit profile"
+          footer={
+            <Button
+              onClick={() =>
+                toast.success("Profile saved", {
+                  action: { label: "Undo", onClick: () => toast("Change reverted") },
+                })
+              }
+            >
+              Save
+            </Button>
+          }
+        >
+          Save to raise a toast while this dialog is open.
+        </Dialog>
+        <Toaster {...args} />
+      </>
+    );
+  },
+};
+
 /** The card on its own, for custom layouts. */
 export const StaticCards: Story = {
   name: "Static cards",
@@ -136,6 +218,7 @@ export const StaticCards: Story = {
       <Toast variant="info" title="New version available" action={{ label: "Refresh", onClick: () => {} }} />
       <Toast variant="warning" title="Storage almost full" description="92% of 5 GB used." />
       <Toast variant="error" title="Couldn't save" description="Check your connection." onDismiss={() => {}} />
+      <Toast variant="loading" title="Uploading…" description="report.pdf" />
     </div>
   ),
 };

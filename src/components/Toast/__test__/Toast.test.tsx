@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { Dialog } from "../../Dialog";
 import { Toast } from "../Toast";
 import { Toaster } from "../Toaster";
 import type { ToasterProps } from "../Toaster";
@@ -277,5 +278,269 @@ describe("Toast", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Close" }));
     expect(onDismiss).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("Toaster with a modal Dialog", () => {
+  /*
+   * jsdom has neither the top layer nor popovers. Stubbing the popover API
+   * is enough to exercise the logic that matters here: where the stack is
+   * rendered, and that it's re-shown after each move.
+   */
+  let showPopover: ReturnType<typeof vi.fn>;
+
+  beforeEach(() => {
+    showPopover = vi.fn(function (this: HTMLElement) {
+      this.setAttribute("data-popover-open", "");
+    });
+    HTMLElement.prototype.showPopover = showPopover as unknown as () => void;
+    const realMatches = Element.prototype.matches;
+    vi.spyOn(Element.prototype, "matches").mockImplementation(function (
+      this: Element,
+      selector: string,
+    ) {
+      if (selector === ":popover-open") return this.hasAttribute("data-popover-open");
+      // jsdom has no `:modal`; with the shim, an open dialog is a modal one.
+      if (selector === ":modal") return (this as HTMLDialogElement).open;
+      return realMatches.call(this, selector);
+    });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    delete (HTMLElement.prototype as Partial<HTMLElement>).showPopover;
+  });
+
+  const App = ({ open }: { open: boolean }) => (
+    <>
+      <Dialog open={open} onClose={() => {}} title="Settings">
+        Body
+      </Dialog>
+      <Toaster />
+    </>
+  );
+
+  const list = () => document.querySelector("ol.sh-toaster") as HTMLOListElement;
+
+  it("is a manual popover, shown on mount", () => {
+    render(<App open={false} />);
+
+    expect(list()).toHaveAttribute("popover", "manual");
+    expect(showPopover).toHaveBeenCalledTimes(1);
+    expect(list().closest("dialog")).toBeNull();
+  });
+
+  it("moves into an open modal and back out when it closes", async () => {
+    const { rerender } = render(<App open={false} />);
+
+    rerender(<App open />);
+    await act(async () => {});
+    expect(list().closest("dialog")).toBe(screen.getByRole("dialog"));
+    expect(showPopover).toHaveBeenCalledTimes(2);
+
+    rerender(<App open={false} />);
+    await act(async () => {});
+    expect(list().closest("dialog")).toBeNull();
+    expect(showPopover).toHaveBeenCalledTimes(3);
+  });
+
+  it("keeps a toast's remaining time across the move", async () => {
+    const { rerender } = render(<App open={false} />);
+    show("Moving", { duration: 1000 });
+
+    advance(700);
+    rerender(<App open />);
+    await act(async () => {});
+
+    advance(299);
+    expect(items()[0]).not.toHaveClass("sh-toaster__item--closing");
+    expect(items()[0]).toHaveClass("sh-toaster__item--shown");
+    advance(1);
+    expect(items()[0]).toHaveClass("sh-toaster__item--closing");
+  });
+
+  it("closes the toast, not the dialog, on Escape", async () => {
+    const onClose = vi.fn();
+    render(
+      <>
+        <Dialog open onClose={onClose} title="Settings">
+          Body
+        </Dialog>
+        <Toaster />
+      </>,
+    );
+    await act(async () => {});
+    show("Inside");
+
+    // jsdom's stylesheet hides a stubbed popover, so role queries can't see in.
+    const notPrevented = fireEvent.keyDown(list().querySelector(".sh-toast__dismiss")!, {
+      key: "Escape",
+    });
+
+    expect(items()[0]).toHaveClass("sh-toaster__item--closing");
+    // Browsers turn Escape into the dialog's `cancel` as a default action,
+    // which stopPropagation alone doesn't prevent.
+    expect(notPrevented).toBe(false);
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it("stays in place when popovers aren't supported", async () => {
+    delete (HTMLElement.prototype as Partial<HTMLElement>).showPopover;
+    render(<App open />);
+    await act(async () => {});
+
+    expect(list().closest("dialog")).toBeNull();
+  });
+});
+
+describe("toast.promise", () => {
+  /** A promise settled by hand, so each state can be checked. */
+  const deferred = <T,>() => {
+    let resolve!: (value: T) => void;
+    let reject!: (reason: unknown) => void;
+    const promise = new Promise<T>((res, rej) => {
+      resolve = res;
+      reject = rej;
+    });
+    return { promise, resolve, reject };
+  };
+
+  const flush = () => act(async () => {});
+
+  it("shows a loading toast that never times out", () => {
+    renderToaster({ duration: 1000 });
+    const { promise } = deferred<string>();
+    act(() => {
+      toast.promise(promise, { loading: "Saving…", success: "Saved" });
+    });
+
+    expect(items()[0]).toHaveAttribute("data-variant", "loading");
+    expect(document.querySelector(".sh-toast__spinner")).toBeInTheDocument();
+
+    advance(60_000);
+    expect(screen.getByText("Saving…")).toBeInTheDocument();
+  });
+
+  it("turns into success in place, then times out normally", async () => {
+    renderToaster({ duration: 1000 });
+    const { promise, resolve } = deferred<string>();
+    act(() => {
+      toast.promise(promise, {
+        loading: "Saving…",
+        success: (name) => ({ title: `Saved ${name}`, description: "All good" }),
+      });
+    });
+
+    resolve("report.pdf");
+    await flush();
+
+    expect(items()).toHaveLength(1);
+    expect(items()[0]).toHaveAttribute("data-variant", "success");
+    expect(screen.getByText("Saved report.pdf")).toBeInTheDocument();
+    expect(screen.getByText("All good")).toBeInTheDocument();
+
+    advance(1000);
+    expect(items()[0]).toHaveClass("sh-toaster__item--closing");
+  });
+
+  it("turns into an error with the rejection reason", async () => {
+    renderToaster();
+    const { promise, reject } = deferred<string>();
+    act(() => {
+      toast
+        .promise(promise, {
+          loading: "Saving…",
+          success: "Saved",
+          error: (reason) => `Failed: ${(reason as Error).message}`,
+        })
+        .catch(() => {});
+    });
+
+    reject(new Error("offline"));
+    await flush();
+
+    expect(items()[0]).toHaveAttribute("data-variant", "error");
+    expect(screen.getByRole("alert")).toHaveTextContent("Failed: offline");
+  });
+
+  it("just closes on rejection when there's no error message", async () => {
+    renderToaster();
+    const { promise, reject } = deferred<string>();
+    act(() => {
+      toast.promise(promise, { loading: "Saving…", success: "Saved" }).catch(() => {});
+    });
+
+    reject(new Error("nope"));
+    await flush();
+
+    expect(items()[0]).toHaveClass("sh-toaster__item--closing");
+  });
+
+  it("returns the original promise", async () => {
+    vi.useRealTimers();
+    renderToaster();
+
+    const value = await toast.promise(Promise.resolve(42), { loading: "…", success: "Done" });
+    expect(value).toBe(42);
+    await expect(
+      toast.promise(Promise.reject(new Error("x")), { loading: "…", success: "Done" }),
+    ).rejects.toThrow("x");
+  });
+
+  it("accepts a function, and treats a synchronous throw as a rejection", async () => {
+    renderToaster();
+    let returned!: Promise<never>;
+    act(() => {
+      returned = toast.promise(
+        () => {
+          throw new Error("sync");
+        },
+        { loading: "…", success: "Done", error: "Broke" },
+      );
+    });
+    await expect(returned).rejects.toThrow("sync");
+    await flush();
+
+    expect(screen.getByText("Broke")).toBeInTheDocument();
+  });
+
+  it("doesn't carry the loading state's settings into the result", async () => {
+    renderToaster({ duration: 1000 });
+    const { promise, resolve } = deferred<void>();
+    act(() => {
+      toast.promise(
+        promise,
+        { loading: "Saving…", success: "Saved" },
+        { icon: <span data-testid="result-icon" />, action: { label: "View", onClick: () => {} } },
+      );
+    });
+
+    expect(screen.queryByTestId("result-icon")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "View" })).not.toBeInTheDocument();
+
+    resolve();
+    await flush();
+
+    expect(screen.getByTestId("result-icon")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "View" })).toBeInTheDocument();
+  });
+
+  it("uses a caller-supplied id", () => {
+    renderToaster();
+    act(() => {
+      toast.promise(new Promise(() => {}), { loading: "Saving…", success: "Saved" }, { id: "save" });
+    });
+
+    act(() => toast.dismiss("save"));
+    expect(items()[0]).toHaveClass("sh-toaster__item--closing");
+  });
+});
+
+describe("Toast loading variant", () => {
+  it("shows a spinner as a status", () => {
+    const { container } = render(<Toast variant="loading" title="Saving…" />);
+
+    expect(screen.getByRole("status")).toHaveTextContent("Saving…");
+    expect(container.querySelector(".sh-toast__spinner")).toBeInTheDocument();
   });
 });

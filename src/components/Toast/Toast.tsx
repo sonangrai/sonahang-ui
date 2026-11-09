@@ -12,10 +12,13 @@ const defaultRole: Record<ToastVariant, "alert" | "status"> = {
   info: "status",
   warning: "alert",
   error: "alert",
+  loading: "status",
 };
 
+const loadingIcon = <span className="sh-toast__spinner" />;
+
 export type ToastProps = {
-  /** Defaults to `default`, which has no icon. */
+  /** Defaults to `default`, which has no icon. `loading` shows a spinner. */
   variant?: ToastVariant;
   title: ReactNode;
   /** Secondary line under the title. */
@@ -55,7 +58,13 @@ export function Toast({
   ...props
 }: ToastProps) {
   const resolvedIcon =
-    icon === undefined ? (variant === "default" ? false : statusIcons[variant]) : icon;
+    icon !== undefined
+      ? icon
+      : variant === "default"
+        ? false
+        : variant === "loading"
+          ? loadingIcon
+          : statusIcons[variant];
 
   return (
     <div

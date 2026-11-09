@@ -1,3 +1,4 @@
+import { isValidElement } from "react";
 import type { MouseEvent, ReactNode } from "react";
 
 import type { ToastVariant } from "./toast.tokens";
@@ -140,6 +141,21 @@ function dismissOne(id: string) {
 
 type VariantShortcut = (title: ReactNode, options?: Omit<ToastOptions, "variant">) => string;
 
+/** A result message: just a title, or a title with any other toast options. */
+export type ToastPromiseContent = ReactNode | ({ title: ReactNode } & Omit<ToastOptions, "id" | "variant">);
+
+export type ToastPromiseMessages<T> = {
+  /** Shown while pending. Stays up until the promise settles. */
+  loading: ReactNode;
+  /** Shown on resolve. A function receives the resolved value. */
+  success: ToastPromiseContent | ((value: T) => ToastPromiseContent);
+  /**
+   * Shown on reject. A function receives the rejection reason. Leave it out
+   * and the loading toast just closes.
+   */
+  error?: ToastPromiseContent | ((reason: unknown) => ToastPromiseContent);
+};
+
 export type ToastFunction = {
   /** Shows a toast and returns its id. */
   (title: ReactNode, options?: ToastOptions): string;
@@ -147,9 +163,94 @@ export type ToastFunction = {
   info: VariantShortcut;
   warning: VariantShortcut;
   error: VariantShortcut;
+  /**
+   * Shows a loading toast that turns into success or error when `promise`
+   * settles. Returns the same promise, so it can be awaited or chained —
+   * pass `options.id` to address the toast afterwards.
+   */
+  promise: <T>(
+    promise: Promise<T> | (() => Promise<T>),
+    messages: ToastPromiseMessages<T>,
+    options?: Omit<ToastOptions, "variant">,
+  ) => Promise<T>;
   /** Closes one toast, or every toast when called without an id. */
   dismiss: (id?: string) => void;
 };
+
+/*
+ * Tells `{ title, description }` apart from a ReactNode. Elements are objects
+ * too, so they have to be ruled out first.
+ */
+const isContentWithOptions = (
+  content: ToastPromiseContent,
+): content is { title: ReactNode } & Omit<ToastOptions, "id" | "variant"> =>
+  typeof content === "object" &&
+  content !== null &&
+  !isValidElement(content) &&
+  !Array.isArray(content) &&
+  !(Symbol.iterator in content) &&
+  "title" in content;
+
+function showPromise<T>(
+  input: Promise<T> | (() => Promise<T>),
+  messages: ToastPromiseMessages<T>,
+  options: Omit<ToastOptions, "variant"> = {},
+): Promise<T> {
+  // A function that throws synchronously is treated as a rejection, so the
+  // toast still settles instead of spinning forever.
+  let promise: Promise<T>;
+  try {
+    promise = typeof input === "function" ? input() : input;
+  } catch (reason) {
+    promise = Promise.reject(reason);
+  }
+
+  const { duration, action, icon, description, onDismiss, dismissible } = options;
+  const id = show(
+    messages.loading,
+    // The icon and action are for the outcome; the loading state has its own
+    // spinner and nothing to act on yet.
+    { ...options, duration: Infinity, icon: undefined, action: undefined },
+    "loading",
+  );
+
+  /*
+   * Every field is set explicitly: an update merges into the existing toast,
+   * so anything left out would carry over from the loading state — most
+   * importantly its infinite duration.
+   */
+  const settle = (variant: "success" | "error", content: ToastPromiseContent) => {
+    const { title, ...overrides } = isContentWithOptions(content)
+      ? content
+      : { title: content };
+
+    show(
+      title,
+      { duration, action, icon, description, onDismiss, dismissible, ...overrides, id },
+      variant,
+    );
+  };
+
+  promise.then(
+    (value) => {
+      const { success } = messages;
+      settle("success", typeof success === "function" ? success(value) : success);
+    },
+    (reason) => {
+      const { error } = messages;
+      if (error === undefined) {
+        dismissOne(id);
+        return;
+      }
+      settle("error", typeof error === "function" ? error(reason) : error);
+    },
+  );
+
+  // The caller gets the original promise, rejection and all. Ours is already
+  // handled above, so ignoring the return value never surfaces as an
+  // unhandled rejection.
+  return promise;
+}
 
 /**
  * Shows a toast in whichever `<Toaster />` is mounted.
@@ -168,6 +269,7 @@ export const toast: ToastFunction = Object.assign(
     info: (title: ReactNode, options?: ToastOptions) => show(title, options, "info"),
     warning: (title: ReactNode, options?: ToastOptions) => show(title, options, "warning"),
     error: (title: ReactNode, options?: ToastOptions) => show(title, options, "error"),
+    promise: showPromise,
     dismiss: (id?: string) => {
       if (id !== undefined) {
         dismissOne(id);

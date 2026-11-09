@@ -167,6 +167,8 @@ export type {
   ToastAction,
   ToastFunction,
   ToastOptions,
+  ToastPromiseContent,
+  ToastPromiseMessages,
   ToastVariant,
   ToastPosition,
 } from './components/Toast';

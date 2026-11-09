@@ -1,4 +1,11 @@
-export const toastVariants = ["default", "success", "info", "warning", "error"] as const;
+export const toastVariants = [
+  "default",
+  "success",
+  "info",
+  "warning",
+  "error",
+  "loading",
+] as const;
 
 export type ToastVariant = (typeof toastVariants)[number];
 
